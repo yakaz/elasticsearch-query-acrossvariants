@@ -19,6 +19,8 @@ import org.elasticsearch.common.network.NetworkUtils;
 import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.index.query.ConstantScoreQueryBuilder;
+import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.search.SearchHit;
@@ -174,6 +176,10 @@ public class BaseESTest {
         if (VERBOSE)
             logger.info(doc.toString());
         node.client().index(doc.index(INDEX).type(TYPE)).actionGet();
+    }
+
+    protected void assertDocs(FilterBuilder filterBuilder, String... ids) throws IOException {
+        assertDocs(new ConstantScoreQueryBuilder(filterBuilder), ids);
     }
 
     protected void assertDocs(QueryBuilder queryBuilder, String... ids) throws IOException {

@@ -20,6 +20,6 @@ public class RegisterAcrossFieldsQueryParsers extends AbstractIndexComponent {
         ScriptService scriptService = injector.getInstance(ScriptService.class);
 
         indicesQueriesRegistry.addQueryParser(new AcrossFieldsQueryParser(analysisService, scriptService));
-        indicesQueriesRegistry.addFilterParser(new AcrossFieldsFilterParser());
+        indicesQueriesRegistry.addFilterParser(new AcrossFieldsFilterParser(analysisService, scriptService));
     }
 }

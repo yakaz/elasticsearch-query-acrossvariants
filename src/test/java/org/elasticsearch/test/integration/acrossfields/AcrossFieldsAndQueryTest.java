@@ -1,9 +1,5 @@
 package org.elasticsearch.test.integration.acrossfields;
 
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.AcrossFieldsAndQuery;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
 import org.elasticsearch.index.query.AcrossFieldsQueryBuilder;
 import org.elasticsearch.test.integration.BaseESTest;
 import org.testng.annotations.Test;
@@ -13,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Test
-public class AcrossFieldsTest extends BaseESTest {
+public class AcrossFieldsAndQueryTest extends BaseESTest {
 
     @Test
     public void testSimple() throws IOException {
@@ -78,16 +74,6 @@ public class AcrossFieldsTest extends BaseESTest {
 
     @Test
     public void testQueryProvider() throws IOException {
-        AcrossFieldsAndQuery.QueryProvider queryProvider = new AcrossFieldsAndQuery.QueryProvider() {
-            @Override
-            public Query queryTerm(String field, String term) {
-                char[] chars = term.toCharArray();
-                for (int i = 0 ; i < chars.length ; ++i)
-                    ++chars[i];
-                return new TermQuery(new Term(field, new String(chars)));
-            }
-        };
-
         indexDoc(doc("1", "field1", "a"));
         indexDoc(doc("2", "field1", "aa"));
         commit();
