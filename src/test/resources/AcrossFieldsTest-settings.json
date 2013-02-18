@@ -1,0 +1,31 @@
+{
+    index: {
+        mapping: {
+            dynamic: false
+        },
+        analysis: {
+            analyzer: {
+                default_index: {
+                    type: "custom",
+                    tokenizer: "whitespace",
+                    filter: ["index_stopwords"]
+                },
+                default_search: {
+                    type: "custom",
+                    tokenizer: "whitespace",
+                    filter: ["search_stopwords"]
+                }
+            },
+            filter: {
+                index_stopwords: {
+                    type: "stop",
+                    stopwords: ["stopword", "index"]
+                },
+                search_stopwords: {
+                    type: "stop",
+                    stopwords: ["stopword", "search"]
+                }
+            }
+        }
+    }
+}
