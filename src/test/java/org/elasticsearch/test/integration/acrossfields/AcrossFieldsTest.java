@@ -9,6 +9,8 @@ import org.elasticsearch.test.integration.BaseESTest;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Test
 public class AcrossFieldsTest extends BaseESTest {
@@ -19,9 +21,9 @@ public class AcrossFieldsTest extends BaseESTest {
         indexDoc(doc("2", "field1", "foo", "field2", "two"));
         commit();
 
-        assertDocs(new AcrossFieldsQueryBuilder().field("field1").value("one"),
+        assertDocs(new AcrossFieldsQueryBuilder().field("field1").value("one").analyzer("whitespace"),
                 "1");
-        assertDocs(new AcrossFieldsQueryBuilder().field("field2").value("two"),
+        assertDocs(new AcrossFieldsQueryBuilder().field("field2").value("two").analyzer("whitespace"),
                 "1",
                 "2");
     }
@@ -72,6 +74,32 @@ public class AcrossFieldsTest extends BaseESTest {
         assertDocs(new AcrossFieldsQueryBuilder().fields("field1^0.5", "field2^2").value("a").analyzer("whitespace"),
                 "2",
                 "1");
+    }
+
+    @Test
+    public void testQueryProvider() throws IOException {
+        AcrossFieldsAndQuery.QueryProvider queryProvider = new AcrossFieldsAndQuery.QueryProvider() {
+            @Override
+            public Query queryTerm(String field, String term) {
+                char[] chars = term.toCharArray();
+                for (int i = 0 ; i < chars.length ; ++i)
+                    ++chars[i];
+                return new TermQuery(new Term(field, new String(chars)));
+            }
+        };
+
+        indexDoc(doc("1", "field1", "a"));
+        indexDoc(doc("2", "field1", "aa"));
+        commit();
+
+        Map<String, Object> params = new HashMap<String, Object>(1);
+        params.put("delta", Integer.valueOf(1));
+        assertDocs(new AcrossFieldsQueryBuilder().fields("field1").value("a").analyzer("whitespace")
+                .lang("mvel").params(params).script(
+                        "ctx.text = ctx.text + ctx.text;" +
+                        "ctx.query = new org.apache.lucene.search.TermQuery(new org.apache.lucene.index.Term(ctx.field, ctx.text));"
+                ),
+                "2");
     }
 
 }

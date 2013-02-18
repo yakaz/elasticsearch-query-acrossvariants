@@ -12,6 +12,9 @@ public class AcrossFieldsQueryBuilder extends BaseQueryBuilder {
     private Map<String, Float> boostedFields = new HashMap<String, Float>();
     private String value;
     private String analyzer;
+    private String lang;
+    private String script;
+    Map<String, Object> params;
     private boolean hasBoostedFields = false;
     private float boost = -1;
 
@@ -99,6 +102,21 @@ public class AcrossFieldsQueryBuilder extends BaseQueryBuilder {
         return this;
     }
 
+    public AcrossFieldsQueryBuilder lang(String lang) {
+        this.lang = lang;
+        return this;
+    }
+
+    public AcrossFieldsQueryBuilder script(String script) {
+        this.script = script;
+        return this;
+    }
+
+    public AcrossFieldsQueryBuilder params(Map<String, Object> params) {
+        this.params = params;
+        return this;
+    }
+
     public AcrossFieldsQueryBuilder boost(float boost) {
         this.boost = boost;
         return this;
@@ -123,6 +141,12 @@ public class AcrossFieldsQueryBuilder extends BaseQueryBuilder {
         }
         if (analyzer != null)
             builder.field("analyzer", analyzer);
+        if (lang != null)
+            builder.field("lang", lang);
+        if (script != null)
+            builder.field("script", script);
+        if (params != null)
+            builder.field("params", params);
         if (boost != -1)
             builder.field("boost", boost);
         builder.endObject();

@@ -1,12 +1,17 @@
 package org.elasticsearch.index.query;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.search.AcrossFieldsAndQuery;
 import org.apache.lucene.search.Query;
+import org.elasticsearch.ElasticSearchIllegalArgumentException;
+import org.elasticsearch.common.collect.Maps;
 import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.xcontent.XContentParser;
 import org.elasticsearch.index.analysis.AnalysisService;
 import org.elasticsearch.index.mapper.MapperService;
+import org.elasticsearch.script.ExecutableScript;
+import org.elasticsearch.script.ScriptService;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,10 +22,12 @@ public class AcrossFieldsQueryParser implements QueryParser {
     public static final String NAME = "acrossfields";
 
     private final AnalysisService analysisService;
+    private final ScriptService scriptService;
 
     @Inject
-    public AcrossFieldsQueryParser(AnalysisService analysisService) {
+    public AcrossFieldsQueryParser(AnalysisService analysisService, ScriptService scriptService) {
         this.analysisService = analysisService;
+        this.scriptService = scriptService;
     }
 
     @Override
@@ -36,6 +43,9 @@ public class AcrossFieldsQueryParser implements QueryParser {
         float boost = 1.0f;
         Analyzer analyzer = analysisService.defaultSearchAnalyzer();
         Map<String,Float> fieldsBoost = new HashMap<String, Float>();
+        String lang = null;
+        String script = null;
+        Map<String, Object> params = Maps.newHashMap();
 
         XContentParser.Token token;
         String currentFieldName = null;
@@ -72,6 +82,13 @@ public class AcrossFieldsQueryParser implements QueryParser {
                     value = parser.text();
                 } else if ("analyzer".equals(currentFieldName)) {
                     analyzer = analysisService.analyzer(parser.text());
+                } else if ("lang".equals(currentFieldName)) {
+                    lang = parser.text();
+                } else if ("script".equals(currentFieldName)) {
+                    script = parser.text();
+                } else if ("params".equals(currentFieldName)) {
+                    parser.nextToken();
+                    params = parser.map();
                 } else if ("boost".equals(currentFieldName)) {
                     boost = parser.floatValue();
                 } else {
@@ -84,6 +101,11 @@ public class AcrossFieldsQueryParser implements QueryParser {
             throw new QueryParsingException(parseContext.index(), "No value specified for "+NAME+" query");
         }
 
+        AcrossFieldsAndQuery.QueryProvider queryProvider = null;
+        if (script != null) {
+            queryProvider = new ScriptQueryProvider(scriptService.executable(lang, script, params));
+        }
+
         Map<String, Float> mappedFieldsBoost = new HashMap<String, Float>();
         for (Map.Entry<String, Float> boostedField : fieldsBoost.entrySet()) {
             String fieldName = boostedField.getKey();
@@ -94,7 +116,11 @@ public class AcrossFieldsQueryParser implements QueryParser {
             mappedFieldsBoost.put(fieldName, boostedField.getValue());
         }
 
-        Query query = new AcrossFieldsAndQuery(mappedFieldsBoost, analyzer, value);
+        Query query;
+        if (queryProvider != null)
+            query = new AcrossFieldsAndQuery(mappedFieldsBoost, analyzer, value, queryProvider);
+        else
+            query = new AcrossFieldsAndQuery(mappedFieldsBoost, analyzer, value);
         query.setBoost(boost);
         return query;
     }
@@ -107,6 +133,39 @@ public class AcrossFieldsQueryParser implements QueryParser {
                 map.put(f.substring(0, pos), Float.parseFloat(f.substring(pos + 1)));
             } else {
                 map.put(f, 1.0f);
+            }
+        }
+    }
+
+    public static class ScriptQueryProvider implements AcrossFieldsAndQuery.QueryProvider {
+
+        private ExecutableScript script;
+        private Map<String, Object> scriptContext;
+
+        public ScriptQueryProvider(ExecutableScript script) {
+            this.script = script;
+            this.scriptContext = new HashMap<String, Object>();
+        }
+
+        @Override
+        public Query queryTerm(String field, String text) {
+            scriptContext.clear();
+            scriptContext.put("field", field);
+            scriptContext.put("text", text);
+            scriptContext.put("term", new Term(field, text));
+            try {
+                script.setNextVar("ctx", scriptContext);
+                script.run();
+                // Unwrap ctx
+                scriptContext.putAll((Map<String, Object>) script.unwrap(scriptContext));
+            } catch (Exception e) {
+                throw new ElasticSearchIllegalArgumentException("failed to execute script", e);
+            }
+
+            try {
+                return (Query) scriptContext.get("query");
+            } catch (ClassCastException e) {
+                throw new ElasticSearchIllegalArgumentException("script did not give a " + Query.class.getCanonicalName() + " in ctx.query", e);
             }
         }
     }
