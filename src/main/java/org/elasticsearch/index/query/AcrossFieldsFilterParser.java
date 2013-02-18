@@ -21,8 +21,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.elasticsearch.index.query.support.QueryParsers.wrapSmartNameFilter;
-
 public class AcrossFieldsFilterParser implements FilterParser {
 
     public static final String NAME = "acrossfields";

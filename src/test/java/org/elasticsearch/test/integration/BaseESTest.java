@@ -1,6 +1,5 @@
 package org.elasticsearch.test.integration;
 
-import org.elasticsearch.ElasticSearchException;
 import org.elasticsearch.ElasticSearchGenerationException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
@@ -8,7 +7,6 @@ import org.elasticsearch.action.admin.indices.analyze.AnalyzeRequest;
 import org.elasticsearch.action.admin.indices.analyze.AnalyzeResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.search.SearchPhaseExecutionException;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.io.BytesStream;
