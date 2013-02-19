@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-public class AcrossFieldsFilterBuilder extends BaseFilterBuilder {
+public class AcrossVariantsFilterBuilder extends BaseFilterBuilder {
 
     private Collection<String> fields = new ArrayList<String>();
     private String value;
@@ -16,79 +16,79 @@ public class AcrossFieldsFilterBuilder extends BaseFilterBuilder {
     private String script;
     Map<String, Object> params;
 
-    public AcrossFieldsFilterBuilder(Collection<String> fields, String value, String analyzer) {
+    public AcrossVariantsFilterBuilder(Collection<String> fields, String value, String analyzer) {
         this.fields = fields;
         this.value = value;
         this.analyzer = analyzer;
     }
 
-    public AcrossFieldsFilterBuilder(String value, String analyzer) {
+    public AcrossVariantsFilterBuilder(String value, String analyzer) {
         this.value = value;
         this.analyzer = analyzer;
     }
 
-    public AcrossFieldsFilterBuilder(String value) {
+    public AcrossVariantsFilterBuilder(String value) {
         this.value = value;
     }
 
-    public AcrossFieldsFilterBuilder() {
+    public AcrossVariantsFilterBuilder() {
     }
 
-    public AcrossFieldsFilterBuilder clearFields() {
+    public AcrossVariantsFilterBuilder clearFields() {
         fields.clear();
         return this;
     }
 
-    public AcrossFieldsFilterBuilder addField(String field) {
+    public AcrossVariantsFilterBuilder addField(String field) {
         fields.add(field);
         return this;
     }
 
-    public AcrossFieldsFilterBuilder field(String field) {
+    public AcrossVariantsFilterBuilder field(String field) {
         return clearFields().addField(field);
     }
 
-    public AcrossFieldsFilterBuilder addFields(Collection<String> fields) {
+    public AcrossVariantsFilterBuilder addFields(Collection<String> fields) {
         for (String field : fields)
             this.fields.add(field);
         return this;
     }
 
-    public AcrossFieldsFilterBuilder addFields(String... fields) {
+    public AcrossVariantsFilterBuilder addFields(String... fields) {
         for (String field : fields)
             this.fields.add(field);
         return this;
     }
 
-    public AcrossFieldsFilterBuilder fields(Collection<String> fields) {
+    public AcrossVariantsFilterBuilder fields(Collection<String> fields) {
         return clearFields().addFields(fields);
     }
 
-    public AcrossFieldsFilterBuilder fields(String... fields) {
+    public AcrossVariantsFilterBuilder fields(String... fields) {
         return clearFields().addFields(fields);
     }
 
-    public AcrossFieldsFilterBuilder value(String value) {
+    public AcrossVariantsFilterBuilder value(String value) {
         this.value = value;
         return this;
     }
 
-    public AcrossFieldsFilterBuilder analyzer(String analyzer) {
+    public AcrossVariantsFilterBuilder analyzer(String analyzer) {
         this.analyzer = analyzer;
         return this;
     }
 
-    public AcrossFieldsFilterBuilder lang(String lang) {
+    public AcrossVariantsFilterBuilder lang(String lang) {
         this.lang = lang;
         return this;
     }
 
-    public AcrossFieldsFilterBuilder script(String script) {
+    public AcrossVariantsFilterBuilder script(String script) {
         this.script = script;
         return this;
     }
 
-    public AcrossFieldsFilterBuilder params(Map<String, Object> params) {
+    public AcrossVariantsFilterBuilder params(Map<String, Object> params) {
         this.params = params;
         return this;
     }
@@ -96,8 +96,8 @@ public class AcrossFieldsFilterBuilder extends BaseFilterBuilder {
     @Override
     protected void doXContent(XContentBuilder builder, Params params) throws IOException {
         if (fields.isEmpty())
-            throw new QueryBuilderException("["+AcrossFieldsFilterParser.NAME+"] no fields given");
-        builder.startObject(AcrossFieldsFilterParser.NAME);
+            throw new QueryBuilderException("["+AcrossVariantsFilterParser.NAME+"] no fields given");
+        builder.startObject(AcrossVariantsFilterParser.NAME);
         builder.field("value", value);
         builder.startArray("fields");
         for (String field : fields)

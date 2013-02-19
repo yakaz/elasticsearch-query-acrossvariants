@@ -31,7 +31,7 @@ import java.util.Set;
  * Take each subspan as alternatives for the parent span,
  * AND the subspans together, and OR them with the parent span.
  */
-public class AcrossFieldsAndQuery extends Query {
+public class AcrossVariantsAndQuery extends Query {
 
     public static interface QueryProvider {
         public Query queryTerm(String field, String term);
@@ -46,19 +46,19 @@ public class AcrossFieldsAndQuery extends Query {
     private float boost;
     protected TermNode termTree;
 
-    public AcrossFieldsAndQuery(Collection<String> fields, Analyzer searchAnalyzer, String text) throws IOException {
+    public AcrossVariantsAndQuery(Collection<String> fields, Analyzer searchAnalyzer, String text) throws IOException {
         this(mapizeFields(fields), searchAnalyzer, text);
     }
 
-    public AcrossFieldsAndQuery(Map<String, Float> boostedFields, Analyzer searchAnalyzer, String text) throws IOException {
+    public AcrossVariantsAndQuery(Map<String, Float> boostedFields, Analyzer searchAnalyzer, String text) throws IOException {
         this(boostedFields, searchAnalyzer, text, TermQueryProvider.INSTANCE);
     }
 
-    public AcrossFieldsAndQuery(Collection<String> fields, Analyzer searchAnalyzer, String text, QueryProvider queryProvider) throws IOException {
+    public AcrossVariantsAndQuery(Collection<String> fields, Analyzer searchAnalyzer, String text, QueryProvider queryProvider) throws IOException {
         this(mapizeFields(fields), searchAnalyzer, text, queryProvider);
     }
 
-    public AcrossFieldsAndQuery(Map<String, Float> boostedFields, Analyzer searchAnalyzer, String text, QueryProvider queryProvider) throws IOException {
+    public AcrossVariantsAndQuery(Map<String, Float> boostedFields, Analyzer searchAnalyzer, String text, QueryProvider queryProvider) throws IOException {
         this.boostedFields = boostedFields;
         this.searchAnalyzer = searchAnalyzer;
         this.text = text;

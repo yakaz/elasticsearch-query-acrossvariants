@@ -31,7 +31,7 @@ import java.util.Map;
  * Take each subspan as alternatives for the parent span,
  * AND the subspans together, and OR them with the parent span.
  */
-public class AcrossFieldsAndFilter extends Filter {
+public class AcrossVariantsAndFilter extends Filter {
 
     public static interface FilterProvider {
         public Filter filterTerm(String field, String term);
@@ -45,11 +45,11 @@ public class AcrossFieldsAndFilter extends Filter {
     private final FilterProvider queryProvider;
     protected TermNode termTree;
 
-    public AcrossFieldsAndFilter(Collection<String> fields, Analyzer searchAnalyzer, String text) throws IOException {
+    public AcrossVariantsAndFilter(Collection<String> fields, Analyzer searchAnalyzer, String text) throws IOException {
         this(fields, searchAnalyzer, text, TermFilterProvider.INSTANCE);
     }
 
-    public AcrossFieldsAndFilter(Collection<String> fields, Analyzer searchAnalyzer, String text, FilterProvider queryProvider) throws IOException {
+    public AcrossVariantsAndFilter(Collection<String> fields, Analyzer searchAnalyzer, String text, FilterProvider queryProvider) throws IOException {
         this.fields = fields;
         this.searchAnalyzer = searchAnalyzer;
         this.text = text;

@@ -10,16 +10,16 @@ import org.elasticsearch.index.settings.IndexSettings;
 import org.elasticsearch.indices.query.IndicesQueriesRegistry;
 import org.elasticsearch.script.ScriptService;
 
-public class RegisterAcrossFieldsQueryParsers extends AbstractIndexComponent {
+public class RegisterAcrossVariantsQueryParsers extends AbstractIndexComponent {
 
     @Inject
-    public RegisterAcrossFieldsQueryParsers(Index index, @IndexSettings Settings indexSettings, IndicesQueriesRegistry indicesQueriesRegistry, Injector injector) {
+    public RegisterAcrossVariantsQueryParsers(Index index, @IndexSettings Settings indexSettings, IndicesQueriesRegistry indicesQueriesRegistry, Injector injector) {
         super(index, indexSettings);
 
         AnalysisService analysisService = injector.getInstance(AnalysisService.class);
         ScriptService scriptService = injector.getInstance(ScriptService.class);
 
-        indicesQueriesRegistry.addQueryParser(new AcrossFieldsQueryParser(analysisService, scriptService));
-        indicesQueriesRegistry.addFilterParser(new AcrossFieldsFilterParser(analysisService, scriptService));
+        indicesQueriesRegistry.addQueryParser(new AcrossVariantsQueryParser(analysisService, scriptService));
+        indicesQueriesRegistry.addFilterParser(new AcrossVariantsFilterParser(analysisService, scriptService));
     }
 }

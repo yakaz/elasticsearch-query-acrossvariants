@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AcrossFieldsQueryBuilder extends BaseQueryBuilder {
+public class AcrossVariantsQueryBuilder extends BaseQueryBuilder {
 
     private Map<String, Float> boostedFields = new HashMap<String, Float>();
     private String value;
@@ -18,106 +18,106 @@ public class AcrossFieldsQueryBuilder extends BaseQueryBuilder {
     private boolean hasBoostedFields = false;
     private float boost = -1;
 
-    public AcrossFieldsQueryBuilder(Map<String, Float> boostedFields, String value, String analyzer) {
+    public AcrossVariantsQueryBuilder(Map<String, Float> boostedFields, String value, String analyzer) {
         this.boostedFields = boostedFields;
         this.value = value;
         this.analyzer = analyzer;
     }
 
-    public AcrossFieldsQueryBuilder(String value, String analyzer) {
+    public AcrossVariantsQueryBuilder(String value, String analyzer) {
         this.value = value;
         this.analyzer = analyzer;
     }
 
-    public AcrossFieldsQueryBuilder(String value) {
+    public AcrossVariantsQueryBuilder(String value) {
         this.value = value;
     }
 
-    public AcrossFieldsQueryBuilder() {
+    public AcrossVariantsQueryBuilder() {
     }
 
-    public AcrossFieldsQueryBuilder clearFields() {
+    public AcrossVariantsQueryBuilder clearFields() {
         boostedFields.clear();
         hasBoostedFields = false;
         return this;
     }
 
-    public AcrossFieldsQueryBuilder addField(String field) {
+    public AcrossVariantsQueryBuilder addField(String field) {
         boostedFields.put(field, -1.0f);
         return this;
     }
 
-    public AcrossFieldsQueryBuilder field(String field) {
+    public AcrossVariantsQueryBuilder field(String field) {
         return clearFields().addField(field);
     }
 
-    public AcrossFieldsQueryBuilder addField(String field, float boost) {
+    public AcrossVariantsQueryBuilder addField(String field, float boost) {
         boostedFields.put(field, boost);
         hasBoostedFields = true;
         return this;
     }
 
-    public AcrossFieldsQueryBuilder field(String field, float boost) {
+    public AcrossVariantsQueryBuilder field(String field, float boost) {
         return clearFields().addField(field, boost);
     }
 
-    public AcrossFieldsQueryBuilder addFields(Collection<String> fields) {
+    public AcrossVariantsQueryBuilder addFields(Collection<String> fields) {
         for (String field : fields)
             boostedFields.put(field, -1.0f);
         return this;
     }
 
-    public AcrossFieldsQueryBuilder addFields(String... fields) {
+    public AcrossVariantsQueryBuilder addFields(String... fields) {
         for (String field : fields)
             boostedFields.put(field, -1.0f);
         return this;
     }
 
-    public AcrossFieldsQueryBuilder fields(Collection<String> fields) {
+    public AcrossVariantsQueryBuilder fields(Collection<String> fields) {
         return clearFields().addFields(fields);
     }
 
-    public AcrossFieldsQueryBuilder fields(String... fields) {
+    public AcrossVariantsQueryBuilder fields(String... fields) {
         return clearFields().addFields(fields);
     }
 
-    public <N extends Number> AcrossFieldsQueryBuilder addFields(Map<String, N> fields) {
+    public <N extends Number> AcrossVariantsQueryBuilder addFields(Map<String, N> fields) {
         for (Map.Entry<String, N> entry : fields.entrySet())
             boostedFields.put(entry.getKey(), entry.getValue().floatValue());
         hasBoostedFields = true;
         return this;
     }
 
-    public <N extends Number> AcrossFieldsQueryBuilder fields(Map<String, N> fields) {
+    public <N extends Number> AcrossVariantsQueryBuilder fields(Map<String, N> fields) {
         return clearFields().addFields(fields);
     }
 
-    public AcrossFieldsQueryBuilder value(String value) {
+    public AcrossVariantsQueryBuilder value(String value) {
         this.value = value;
         return this;
     }
 
-    public AcrossFieldsQueryBuilder analyzer(String analyzer) {
+    public AcrossVariantsQueryBuilder analyzer(String analyzer) {
         this.analyzer = analyzer;
         return this;
     }
 
-    public AcrossFieldsQueryBuilder lang(String lang) {
+    public AcrossVariantsQueryBuilder lang(String lang) {
         this.lang = lang;
         return this;
     }
 
-    public AcrossFieldsQueryBuilder script(String script) {
+    public AcrossVariantsQueryBuilder script(String script) {
         this.script = script;
         return this;
     }
 
-    public AcrossFieldsQueryBuilder params(Map<String, Object> params) {
+    public AcrossVariantsQueryBuilder params(Map<String, Object> params) {
         this.params = params;
         return this;
     }
 
-    public AcrossFieldsQueryBuilder boost(float boost) {
+    public AcrossVariantsQueryBuilder boost(float boost) {
         this.boost = boost;
         return this;
     }
@@ -125,8 +125,8 @@ public class AcrossFieldsQueryBuilder extends BaseQueryBuilder {
     @Override
     protected void doXContent(XContentBuilder builder, Params params) throws IOException {
         if (boostedFields.isEmpty())
-            throw new QueryBuilderException("["+AcrossFieldsQueryParser.NAME+"] no fields given");
-        builder.startObject(AcrossFieldsQueryParser.NAME);
+            throw new QueryBuilderException("["+AcrossVariantsQueryParser.NAME+"] no fields given");
+        builder.startObject(AcrossVariantsQueryParser.NAME);
         builder.field("value", value);
         if (hasBoostedFields) {
             builder.startObject("fields");

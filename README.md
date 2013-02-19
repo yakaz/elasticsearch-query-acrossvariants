@@ -1,29 +1,29 @@
-Across Fields Query Plugin
-==========================
+Across Variants Query Plugin
+============================
 
 A decompounding-variants aware, across fields, conjunctive query.
 
-The Across Fields Query plugin provides with a new query and filter type that permits querying multiple variants tokens for same position (like different compound analysis) and supports querying each variant across multiple fields.
+The Across Variants Query plugin provides with a new query and filter type that permits querying multiple variants tokens for same position (like different compound analysis) and supports querying each variant across multiple fields.
 
 Installation
 ------------
 
 Simply run at the root of your ElasticSearch v0.20.2+ installation:
 
-	bin/plugin -install com.yakaz.elasticsearch.plugins/elasticsearch-query-acrossfields/1.0.0
+	bin/plugin -install com.yakaz.elasticsearch.plugins/elasticsearch-query-acrossvariants/1.0.0
 
 This will download the plugin from the Central Maven Repository.
 
 For older versions of ElasticSearch, you can still use the longer:
 
-	bin/plugin -url http://oss.sonatype.org/content/repositories/releases/com/yakaz/elasticsearch/plugins/elasticsearch-query-acrossfields/1.0.0/elasticsearch-query-acrossfields-1.0.0.zip install elasticsearch-query-acrossfields
+	bin/plugin -url http://oss.sonatype.org/content/repositories/releases/com/yakaz/elasticsearch/plugins/elasticsearch-query-acrossvariants/1.0.0/elasticsearch-query-acrossvariants-1.0.0.zip install elasticsearch-query-acrossvariants
 
 In order to declare this plugin as a dependency, add the following to your `pom.xml`:
 
 ```xml
 <dependency>
     <groupId>com.yakaz.elasticsearch.plugins</groupId>
-    <artifactId>elasticsearch-query-acrossfields</artifactId>
+    <artifactId>elasticsearch-query-acrossvariants</artifactId>
     <version>1.0.0</version>
 </dependency>
 ```
@@ -56,7 +56,7 @@ This plugin permits querying each term across multiple fields so that querying `
 Configuration
 -------------
 
-The plugin provides you with the `across_fields` query and filter.<br/>
+The plugin provides you with the `across_variants` query and filter.<br/>
 It expects a list of fields to be queried, under the `fields` property, the `value` to query, an optional `analyzer` to tokenize it.
 
 Additionaly you can customize the leaf query type that is used in the `BooleanQuery` tree, it defaults to a simple `TermQuery`.
@@ -65,7 +65,7 @@ Using such customization, you can decide to use a `PrefixQuery` instead, or even
 ### Reference
 
 ```js
-across_fields: {
+across_variants: {
     // Mandatory: Fields specification, multiple variants are possible
     fields: "field",
     fields: "boosted_field^2",
@@ -87,7 +87,7 @@ across_fields: {
 }
 ```
 
-The `across_fields` query accepts a `boost` parameter, the `across_fields` _filter_ naturally does not.
+The `across_variants` query accepts a `boost` parameter, the `across_variants` _filter_ naturally does not.
 
 The query type customization feature through scripting requires some more details.<br/>
 You should work with the given context `ctx` variable. Here is a description of its content:
@@ -197,7 +197,7 @@ Now let's test some queries:
 curl -XGET 'localhost:9200/test/test/_search?pretty=true' -d '
 {
     query: {
-        across_fields: {
+        across_variants: {
             fields: ["name^2","category"],
             value: "wi-fi monitoring",
             analyzer:"compound_variants"
