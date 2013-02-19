@@ -91,9 +91,8 @@ public class AcrossVariantsAndFilter extends Filter {
         return root;
     }
 
-    public Filter rewrite(IndexReader reader) throws IOException {
-        Filter rtn = termTree.visit(TREE_VISITOR);
-        return rtn;
+    public Filter rewrite() throws IOException {
+        return termTree.visit(TREE_VISITOR);
     }
 
     public Collection<String> getFields() {
@@ -129,7 +128,7 @@ public class AcrossVariantsAndFilter extends Filter {
 
     @Override
     public DocIdSet getDocIdSet(IndexReader reader) throws IOException {
-        return rewrite(reader).getDocIdSet(reader);
+        return rewrite().getDocIdSet(reader);
     }
 
     public static class TermFilterProvider implements FilterProvider {

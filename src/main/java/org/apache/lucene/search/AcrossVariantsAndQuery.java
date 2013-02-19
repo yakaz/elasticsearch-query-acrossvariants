@@ -105,7 +105,7 @@ public class AcrossVariantsAndQuery extends Query {
     public Query rewrite(IndexReader reader) throws IOException {
         Query rtn = termTree.visit(TREE_VISITOR);
         rtn.setBoost(boost);
-        return rtn;
+        return rtn.rewrite(reader);
     }
 
     public void setBoost(float boost) {
@@ -360,7 +360,6 @@ public class AcrossVariantsAndQuery extends Query {
                         }
                     }
                 }
-                nodeQuery.setMinimumNumberShouldMatch(1);
 
                 if (subQueries == null)
                     return nodeQuery;
@@ -368,7 +367,6 @@ public class AcrossVariantsAndQuery extends Query {
                 BooleanQuery rtn = new BooleanQuery(true);
                 rtn.add(nodeQuery, BooleanClause.Occur.SHOULD);
                 rtn.add(subQueries, BooleanClause.Occur.SHOULD);
-                rtn.setMinimumNumberShouldMatch(1);
                 return rtn;
 
             }
