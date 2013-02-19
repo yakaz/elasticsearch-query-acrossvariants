@@ -23,7 +23,8 @@ import java.util.Map;
 
 public class AcrossFieldsFilterParser implements FilterParser {
 
-    public static final String NAME = "acrossfields";
+    public static final String NAME = "across_fields";
+    public static final String[] NAMES = { NAME, "acrossfields" };
 
     private final AnalysisService analysisService;
     private final ScriptService scriptService;
@@ -36,7 +37,7 @@ public class AcrossFieldsFilterParser implements FilterParser {
 
     @Override
     public String[] names() {
-        return new String[]{NAME};
+        return NAMES;
     }
 
     @Override

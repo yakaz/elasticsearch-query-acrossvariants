@@ -19,7 +19,8 @@ import java.util.Map;
 
 public class AcrossFieldsQueryParser implements QueryParser {
 
-    public static final String NAME = "acrossfields";
+    public static final String NAME = "across_fields";
+    public static final String[] NAMES = { NAME, "acrossfields" };
 
     private final AnalysisService analysisService;
     private final ScriptService scriptService;
@@ -32,7 +33,7 @@ public class AcrossFieldsQueryParser implements QueryParser {
 
     @Override
     public String[] names() {
-        return new String[]{NAME};
+        return NAMES;
     }
 
     @Override
