@@ -109,6 +109,7 @@ public class AcrossVariantsFilterParser implements FilterParser {
 
         Collection<String> mappedFields = new ArrayList<String>(fields.size());
         for (String fieldName : fields) {
+            fieldName = fieldName.trim();
             MapperService.SmartNameFieldMappers smartNameFieldMappers = parseContext.smartFieldMappers(fieldName);
             if (smartNameFieldMappers != null && smartNameFieldMappers.hasMapper()) {
                 fieldName = smartNameFieldMappers.mapper().names().indexName();

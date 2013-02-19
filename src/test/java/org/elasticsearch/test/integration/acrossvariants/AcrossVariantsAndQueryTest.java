@@ -5,6 +5,8 @@ import org.elasticsearch.test.integration.BaseESTest;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +43,43 @@ public class AcrossVariantsAndQueryTest extends BaseESTest {
                 "2");
         assertDocs(new AcrossVariantsQueryBuilder().fields("field1", "field2").value("y z").analyzer("whitespace"),
                 "3");
+    }
+
+    @Test
+    public void testFields() throws IOException {
+        indexDoc(doc("1", "field1", "one", "field2", "two"));
+        indexDoc(doc("2", "field1", "two", "field2", "one"));
+        commit();
+
+        assertDocs(new AcrossVariantsQueryBuilder().fields("field1,field2").value("one").analyzer("whitespace"),
+                "1", "2");
+
+        assertDocs(new AcrossVariantsQueryBuilder().fields(" field1 , field2 ").value("one").analyzer("whitespace"),
+                "1", "2");
+
+        Collection<String> list = new ArrayList<String>(2);
+        list.add("field1");
+        list.add(" field2 ");
+        assertDocs(new AcrossVariantsQueryBuilder().fields(list).value("one").analyzer("whitespace"),
+                "1", "2");
+
+        Map<String, Integer> imap = new HashMap<String, Integer>(2);
+        imap.put("field1", 1);
+        imap.put(" field2 ", 1);
+        assertDocs(new AcrossVariantsQueryBuilder().fields(imap).value("one").analyzer("whitespace"),
+                "1", "2");
+
+        Map<String, Float> fmap = new HashMap<String, Float>(2);
+        fmap.put("field1", 1.0f);
+        fmap.put(" field2 ", 1.0f);
+        assertDocs(new AcrossVariantsQueryBuilder().fields(fmap).value("one").analyzer("whitespace"),
+                "1", "2");
+
+        Map<String, Double> dmap = new HashMap<String, Double>(2);
+        dmap.put("field1", 1.0);
+        dmap.put(" field2 ", 1.0);
+        assertDocs(new AcrossVariantsQueryBuilder().fields(dmap).value("one").analyzer("whitespace"),
+                "1", "2");
     }
 
     @Test

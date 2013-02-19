@@ -109,7 +109,7 @@ public class AcrossVariantsQueryParser implements QueryParser {
 
         Map<String, Float> mappedFieldsBoost = new HashMap<String, Float>();
         for (Map.Entry<String, Float> boostedField : fieldsBoost.entrySet()) {
-            String fieldName = boostedField.getKey();
+            String fieldName = boostedField.getKey().trim();
             MapperService.SmartNameFieldMappers smartNameFieldMappers = parseContext.smartFieldMappers(fieldName);
             if (smartNameFieldMappers != null && smartNameFieldMappers.hasMapper()) {
                 fieldName = smartNameFieldMappers.mapper().names().indexName();
