@@ -1,13 +1,12 @@
 package org.elasticsearch.test.integration.acrossvariants;
 
-import org.apache.lucene.analysis.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.AcrossVariantsAndFilter;
 import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanFilter;
+import org.elasticsearch.common.lucene.search.XBooleanFilter;
 import org.apache.lucene.search.Filter;
-import org.apache.lucene.search.FilterClause;
-import org.apache.lucene.search.TermsFilter;
+import org.apache.lucene.queries.FilterClause;
 import org.apache.lucene.util.Version;
 import org.elasticsearch.common.lucene.search.MatchAllDocsFilter;
 import org.elasticsearch.common.lucene.search.TermFilter;
@@ -43,9 +42,9 @@ public class AcrossVariantsAndFilterVariantsTest {
     public void testSingle() throws IOException {
         AcrossVariantsAndFilter Filter = new AcrossVariantsAndFilter(Arrays.asList("field1"), new WhitespaceAnalyzer(Version.LUCENE_35), "a");
         Filter rewritten = Filter.rewrite();
-        assertThat(rewritten, instanceOf(BooleanFilter.class));
+        assertThat(rewritten, instanceOf(XBooleanFilter.class));
 
-        assertThat(((BooleanFilter) rewritten).clauses(), equalTo(Arrays.asList(
+        assertThat(((XBooleanFilter) rewritten).clauses(), equalTo(Arrays.asList(
                 new FilterClause(q("field1", "a"), BooleanClause.Occur.SHOULD))));
     }
 
@@ -53,16 +52,16 @@ public class AcrossVariantsAndFilterVariantsTest {
     public void testSimple() throws IOException {
         AcrossVariantsAndFilter Filter = new AcrossVariantsAndFilter(Arrays.asList("field1"), new WhitespaceAnalyzer(Version.LUCENE_35), "a b c");
         Filter rewritten = Filter.rewrite();
-        assertThat(rewritten, instanceOf(BooleanFilter.class));
+        assertThat(rewritten, instanceOf(XBooleanFilter.class));
 
-        BooleanFilter filterA = new BooleanFilter();
-        BooleanFilter filterB = new BooleanFilter();
-        BooleanFilter filterC = new BooleanFilter();
+        XBooleanFilter filterA = new XBooleanFilter();
+        XBooleanFilter filterB = new XBooleanFilter();
+        XBooleanFilter filterC = new XBooleanFilter();
         filterA.add(q("field1", "a"), BooleanClause.Occur.SHOULD);
         filterB.add(q("field1", "b"), BooleanClause.Occur.SHOULD);
         filterC.add(q("field1", "c"), BooleanClause.Occur.SHOULD);
 
-        assertThat(((BooleanFilter) rewritten).clauses(), equalTo(Arrays.asList(
+        assertThat(((XBooleanFilter) rewritten).clauses(), equalTo(Arrays.asList(
                 new FilterClause(filterA, BooleanClause.Occur.MUST),
                 new FilterClause(filterB, BooleanClause.Occur.MUST),
                 new FilterClause(filterC, BooleanClause.Occur.MUST)
@@ -73,11 +72,11 @@ public class AcrossVariantsAndFilterVariantsTest {
     public void testAcross() throws IOException {
         AcrossVariantsAndFilter Filter = new AcrossVariantsAndFilter(Arrays.asList("field1", "field2"), new WhitespaceAnalyzer(Version.LUCENE_35), "a b");
         Filter rewritten = Filter.rewrite();
-        assertThat(rewritten, instanceOf(BooleanFilter.class));
+        assertThat(rewritten, instanceOf(XBooleanFilter.class));
 
-        BooleanFilter level0 = new BooleanFilter();
-        BooleanFilter filterA = new BooleanFilter();
-        BooleanFilter filterB = new BooleanFilter();
+        XBooleanFilter level0 = new XBooleanFilter();
+        XBooleanFilter filterA = new XBooleanFilter();
+        XBooleanFilter filterB = new XBooleanFilter();
 
         level0.add(filterA, BooleanClause.Occur.MUST);
         level0.add(filterB, BooleanClause.Occur.MUST);
@@ -86,7 +85,7 @@ public class AcrossVariantsAndFilterVariantsTest {
         filterB.add(q("field1", "b"), BooleanClause.Occur.SHOULD);
         filterB.add(q("field2", "b"), BooleanClause.Occur.SHOULD);
 
-        assertThat((BooleanFilter) rewritten, equalTo(level0));
+        assertThat((XBooleanFilter) rewritten, equalTo(level0));
     }
 
     @Test
@@ -100,9 +99,9 @@ public class AcrossVariantsAndFilterVariantsTest {
 
         AcrossVariantsAndFilter Filter = new AcrossVariantsAndFilter(Arrays.asList("field1"), new WhitespaceAnalyzer(Version.LUCENE_35), "a", FilterProvider);
         Filter rewritten = Filter.rewrite();
-        assertThat(rewritten, instanceOf(BooleanFilter.class));
+        assertThat(rewritten, instanceOf(XBooleanFilter.class));
 
-        assertThat(((BooleanFilter) rewritten).clauses(), equalTo(Arrays.asList(
+        assertThat(((XBooleanFilter) rewritten).clauses(), equalTo(Arrays.asList(
                 new FilterClause(new MatchAllDocsFilter(), BooleanClause.Occur.SHOULD)
         )));
     }
@@ -119,9 +118,9 @@ public class AcrossVariantsAndFilterVariantsTest {
                 ),
                 "DUMMY a:A");
         Filter rewritten = Filter.rewrite();
-        assertThat(rewritten, instanceOf(BooleanFilter.class));
+        assertThat(rewritten, instanceOf(XBooleanFilter.class));
 
-        assertThat(((BooleanFilter) rewritten).clauses(), equalTo(Arrays.asList(
+        assertThat(((XBooleanFilter) rewritten).clauses(), equalTo(Arrays.asList(
                 new FilterClause(q("field1", "a"), BooleanClause.Occur.SHOULD),
                 new FilterClause(q("field1", "A"), BooleanClause.Occur.SHOULD)
         )));
@@ -141,16 +140,16 @@ public class AcrossVariantsAndFilterVariantsTest {
                 //     0123456789012345
                 "DUMMY a wi-fi hotspot");
         Filter rewritten = Filter.rewrite();
-        assertThat(rewritten, instanceOf(BooleanFilter.class));
+        assertThat(rewritten, instanceOf(XBooleanFilter.class));
 
-        BooleanFilter level0 = new BooleanFilter();
-        BooleanFilter level1 = new BooleanFilter();
-        BooleanFilter level2 = new BooleanFilter();
-        BooleanFilter filterA = new BooleanFilter();
-        BooleanFilter filterWiFi = new BooleanFilter();
-        BooleanFilter filterWi = new BooleanFilter();
-        BooleanFilter filterFi = new BooleanFilter();
-        BooleanFilter filterHotspot = new BooleanFilter();
+        XBooleanFilter level0 = new XBooleanFilter();
+        XBooleanFilter level1 = new XBooleanFilter();
+        XBooleanFilter level2 = new XBooleanFilter();
+        XBooleanFilter filterA = new XBooleanFilter();
+        XBooleanFilter filterWiFi = new XBooleanFilter();
+        XBooleanFilter filterWi = new XBooleanFilter();
+        XBooleanFilter filterFi = new XBooleanFilter();
+        XBooleanFilter filterHotspot = new XBooleanFilter();
 
         filterA.add(q("field1", "a"), BooleanClause.Occur.SHOULD);
         filterWiFi.add(q("field1", "wi-fi"), BooleanClause.Occur.SHOULD);
@@ -170,7 +169,7 @@ public class AcrossVariantsAndFilterVariantsTest {
         }
         level0.add(filterHotspot, BooleanClause.Occur.MUST);
 
-        assertThat((BooleanFilter) rewritten, equalTo(level0));
+        assertThat((XBooleanFilter) rewritten, equalTo(level0));
     }
 
     @Test
@@ -187,21 +186,21 @@ public class AcrossVariantsAndFilterVariantsTest {
                 //     01234567890123456789
                 "DUMMY a b:(d e:(g h) f) c");
         Filter rewritten = Filter.rewrite();
-        assertThat(rewritten, instanceOf(BooleanFilter.class));
+        assertThat(rewritten, instanceOf(XBooleanFilter.class));
 
-        BooleanFilter level0 = new BooleanFilter();
-        BooleanFilter level1 = new BooleanFilter();
-        BooleanFilter level2 = new BooleanFilter();
-        BooleanFilter level3 = new BooleanFilter();
-        BooleanFilter level4 = new BooleanFilter();
-        BooleanFilter filterA = new BooleanFilter();
-        BooleanFilter filterB = new BooleanFilter();
-        BooleanFilter filterC = new BooleanFilter();
-        BooleanFilter filterD = new BooleanFilter();
-        BooleanFilter filterE = new BooleanFilter();
-        BooleanFilter filterF = new BooleanFilter();
-        BooleanFilter filterG = new BooleanFilter();
-        BooleanFilter filterH = new BooleanFilter();
+        XBooleanFilter level0 = new XBooleanFilter();
+        XBooleanFilter level1 = new XBooleanFilter();
+        XBooleanFilter level2 = new XBooleanFilter();
+        XBooleanFilter level3 = new XBooleanFilter();
+        XBooleanFilter level4 = new XBooleanFilter();
+        XBooleanFilter filterA = new XBooleanFilter();
+        XBooleanFilter filterB = new XBooleanFilter();
+        XBooleanFilter filterC = new XBooleanFilter();
+        XBooleanFilter filterD = new XBooleanFilter();
+        XBooleanFilter filterE = new XBooleanFilter();
+        XBooleanFilter filterF = new XBooleanFilter();
+        XBooleanFilter filterG = new XBooleanFilter();
+        XBooleanFilter filterH = new XBooleanFilter();
         filterA.add(q("field1", "a"), BooleanClause.Occur.SHOULD);
         filterB.add(q("field1", "b"), BooleanClause.Occur.SHOULD);
         filterC.add(q("field1", "c"), BooleanClause.Occur.SHOULD);
@@ -232,7 +231,7 @@ public class AcrossVariantsAndFilterVariantsTest {
         }
         level0.add(filterC, BooleanClause.Occur.MUST);
 
-        assertThat((BooleanFilter) rewritten, equalTo(level0));
+        assertThat((XBooleanFilter) rewritten, equalTo(level0));
     }
 
 }

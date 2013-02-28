@@ -1,6 +1,6 @@
 package org.elasticsearch.test.integration.acrossvariants;
 
-import org.apache.lucene.analysis.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.AcrossVariantsAndQuery;
 import org.apache.lucene.search.BooleanClause;

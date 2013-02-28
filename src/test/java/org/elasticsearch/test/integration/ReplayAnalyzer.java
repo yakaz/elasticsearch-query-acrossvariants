@@ -1,11 +1,11 @@
 package org.elasticsearch.test.integration;
 
-import org.apache.lucene.analysis.KeywordTokenizer;
-import org.apache.lucene.analysis.ReusableAnalyzerBase;
+import org.apache.lucene.analysis.core.KeywordTokenizer;
+import org.apache.lucene.analysis.Analyzer;
 
 import java.io.Reader;
 
-public class ReplayAnalyzer extends ReusableAnalyzerBase {
+public class ReplayAnalyzer extends Analyzer {
 
     protected final String[] tokens;
     protected final int[] positionIncrements;

@@ -10,13 +10,13 @@ Installation
 
 Simply run at the root of your ElasticSearch v0.20.2+ installation:
 
-	bin/plugin -install com.yakaz.elasticsearch.plugins/elasticsearch-query-acrossvariants/1.0.0
+	bin/plugin -install com.yakaz.elasticsearch.plugins/elasticsearch-query-acrossvariants/1.1.0
 
 This will download the plugin from the Central Maven Repository.
 
 For older versions of ElasticSearch, you can still use the longer:
 
-	bin/plugin -url http://oss.sonatype.org/content/repositories/releases/com/yakaz/elasticsearch/plugins/elasticsearch-query-acrossvariants/1.0.0/elasticsearch-query-acrossvariants-1.0.0.zip install elasticsearch-query-acrossvariants
+	bin/plugin -url http://oss.sonatype.org/content/repositories/releases/com/yakaz/elasticsearch/plugins/elasticsearch-query-acrossvariants/1.1.0/elasticsearch-query-acrossvariants-1.1.0.zip install elasticsearch-query-acrossvariants
 
 In order to declare this plugin as a dependency, add the following to your `pom.xml`:
 
@@ -24,19 +24,21 @@ In order to declare this plugin as a dependency, add the following to your `pom.
 <dependency>
     <groupId>com.yakaz.elasticsearch.plugins</groupId>
     <artifactId>elasticsearch-query-acrossvariants</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
 Version matrix:
 
-	┌──────────────────────────────┬──────────────────┐
-	│ HashSplitter Analysis Plugin │ ElasticSearch    │
-	├──────────────────────────────┼──────────────────┤
-	│ master                       │ 0.19.0 ─► master │
-	├──────────────────────────────┼──────────────────┤
-	│ 1.0.0                        │ 0.19.0 ─► master │
-	└──────────────────────────────┴──────────────────┘
+	┌──────────────────────────────┬────────────────┐
+	│ HashSplitter Analysis Plugin │ ElasticSearch  │
+	├──────────────────────────────┼────────────────┤
+	│ master                       │ 0.90 ─► master │
+	├──────────────────────────────┼────────────────┤
+	│ 1.1.0                        │ 0.90 ─► master │
+	├──────────────────────────────┼────────────────┤
+	│ 1.0.0                        │ 0.19 ─► master │
+	└──────────────────────────────┴────────────────┘
 
 Description
 -----------

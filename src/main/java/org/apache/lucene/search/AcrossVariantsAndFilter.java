@@ -5,9 +5,11 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.AtomicReaderContext;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.util.Bits;
 import org.elasticsearch.common.lucene.search.TermFilter;
+import org.elasticsearch.common.lucene.search.XBooleanFilter;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -127,8 +129,8 @@ public class AcrossVariantsAndFilter extends Filter {
     }
 
     @Override
-    public DocIdSet getDocIdSet(IndexReader reader) throws IOException {
-        return rewrite().getDocIdSet(reader);
+    public DocIdSet getDocIdSet(AtomicReaderContext context, Bits acceptDocs) throws IOException {
+        return rewrite().getDocIdSet(context, acceptDocs);
     }
 
     public static class TermFilterProvider implements FilterProvider {
@@ -308,7 +310,7 @@ public class AcrossVariantsAndFilter extends Filter {
                 if (childrenOutput.size() == 1) {
                     subQueries = childrenOutput.get(0);
                 } else {
-                    BooleanFilter _subQueries = new BooleanFilter();
+                    XBooleanFilter _subQueries = new XBooleanFilter();
                     for (Filter subquery : childrenOutput)
                         _subQueries.add(subquery, BooleanClause.Occur.MUST);
                     subQueries = _subQueries;
@@ -319,12 +321,12 @@ public class AcrossVariantsAndFilter extends Filter {
 
                 // Root node
                 if (subQueries == null)
-                    return new BooleanFilter();
+                    return new XBooleanFilter();
                 return subQueries;
 
             } else {
 
-                BooleanFilter nodeFilter = new BooleanFilter();
+                XBooleanFilter nodeFilter = new XBooleanFilter();
                 for (String field : fields) {
                     Filter filter = queryProvider.filterTerm(field, node.term.term);
                     nodeFilter.add(filter, BooleanClause.Occur.SHOULD);
@@ -339,7 +341,7 @@ public class AcrossVariantsAndFilter extends Filter {
                 if (subQueries == null)
                     return nodeFilter;
 
-                BooleanFilter rtn = new BooleanFilter();
+                XBooleanFilter rtn = new XBooleanFilter();
                 rtn.add(nodeFilter, BooleanClause.Occur.SHOULD);
                 rtn.add(subQueries, BooleanClause.Occur.SHOULD);
                 return rtn;
