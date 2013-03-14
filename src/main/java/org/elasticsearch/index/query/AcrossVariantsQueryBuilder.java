@@ -123,7 +123,7 @@ public class AcrossVariantsQueryBuilder extends BaseQueryBuilder {
     }
 
     @Override
-    protected void doXContent(XContentBuilder builder, Params params) throws IOException {
+    protected void doXContent(XContentBuilder builder, Params parameters) throws IOException {
         if (boostedFields.isEmpty())
             throw new QueryBuilderException("["+AcrossVariantsQueryParser.NAME+"] no fields given");
         builder.startObject(AcrossVariantsQueryParser.NAME);

@@ -94,7 +94,7 @@ public class AcrossVariantsFilterBuilder extends BaseFilterBuilder {
     }
 
     @Override
-    protected void doXContent(XContentBuilder builder, Params params) throws IOException {
+    protected void doXContent(XContentBuilder builder, Params parameters) throws IOException {
         if (fields.isEmpty())
             throw new QueryBuilderException("["+AcrossVariantsFilterParser.NAME+"] no fields given");
         builder.startObject(AcrossVariantsFilterParser.NAME);
