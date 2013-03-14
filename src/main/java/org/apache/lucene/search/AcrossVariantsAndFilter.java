@@ -71,7 +71,7 @@ public class AcrossVariantsAndFilter extends Filter {
         TermNode root = new TermNode(null);
 
         // Logic similar to QueryParser#getFieldQuery
-        final TokenStream source = searchAnalyzer.tokenStream(null, new StringReader(text));
+        final TokenStream source = searchAnalyzer.tokenStream(null, input);
         source.reset();
 
         final CharTermAttribute termAtt = source.addAttribute(CharTermAttribute.class);
