@@ -44,18 +44,18 @@ public class AcrossVariantsAndFilter extends Filter {
     private final Collection<String> fields;
     private final Analyzer searchAnalyzer;
     private final String text;
-    private final FilterProvider queryProvider;
+    private final FilterProvider filterProvider;
     protected TermNode termTree;
 
     public AcrossVariantsAndFilter(Collection<String> fields, Analyzer searchAnalyzer, String text) throws IOException {
         this(fields, searchAnalyzer, text, TermFilterProvider.INSTANCE);
     }
 
-    public AcrossVariantsAndFilter(Collection<String> fields, Analyzer searchAnalyzer, String text, FilterProvider queryProvider) throws IOException {
+    public AcrossVariantsAndFilter(Collection<String> fields, Analyzer searchAnalyzer, String text, FilterProvider filterProvider) throws IOException {
         this.fields = fields;
         this.searchAnalyzer = searchAnalyzer;
         this.text = text;
-        this.queryProvider = queryProvider;
+        this.filterProvider = filterProvider;
         this.termTree = buildTree(new StringReader(text));
     }
 
@@ -328,11 +328,11 @@ public class AcrossVariantsAndFilter extends Filter {
 
                 XBooleanFilter nodeFilter = new XBooleanFilter();
                 for (String field : fields) {
-                    Filter filter = queryProvider.filterTerm(field, node.term.term);
+                    Filter filter = filterProvider.filterTerm(field, node.term.term);
                     nodeFilter.add(filter, BooleanClause.Occur.SHOULD);
                     if (node.alternateWritings != null) {
                         for (String alternateWriting : node.alternateWritings) {
-                            filter = queryProvider.filterTerm(field, alternateWriting);
+                            filter = filterProvider.filterTerm(field, alternateWriting);
                             nodeFilter.add(filter, BooleanClause.Occur.SHOULD);
                         }
                     }
