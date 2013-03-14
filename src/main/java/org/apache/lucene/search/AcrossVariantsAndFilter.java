@@ -312,7 +312,8 @@ public class AcrossVariantsAndFilter extends Filter {
                 } else {
                     XBooleanFilter _subQueries = new XBooleanFilter();
                     for (Filter subquery : childrenOutput)
-                        _subQueries.add(subquery, BooleanClause.Occur.MUST);
+                        if (subquery != null)
+                            _subQueries.add(subquery, BooleanClause.Occur.MUST);
                     subQueries = _subQueries;
                 }
             }
@@ -329,11 +330,13 @@ public class AcrossVariantsAndFilter extends Filter {
                 XBooleanFilter nodeFilter = new XBooleanFilter();
                 for (String field : fields) {
                     Filter filter = filterProvider.filterTerm(field, node.term.term);
-                    nodeFilter.add(filter, BooleanClause.Occur.SHOULD);
+                    if (filter != null)
+                        nodeFilter.add(filter, BooleanClause.Occur.SHOULD);
                     if (node.alternateWritings != null) {
                         for (String alternateWriting : node.alternateWritings) {
                             filter = filterProvider.filterTerm(field, alternateWriting);
-                            nodeFilter.add(filter, BooleanClause.Occur.SHOULD);
+                            if (filter != null)
+                                nodeFilter.add(filter, BooleanClause.Occur.SHOULD);
                         }
                     }
                 }
