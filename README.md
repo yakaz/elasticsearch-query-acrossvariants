@@ -8,15 +8,11 @@ The Across Variants Query plugin provides with a new query and filter type that 
 Installation
 ------------
 
-Simply run at the root of your ElasticSearch v0.20.2+ installation:
+Simply run at the root of your ElasticSearch installation:
 
-	bin/plugin -install com.yakaz.elasticsearch.plugins/elasticsearch-query-acrossvariants/1.1.1
+	bin/plugin --install com.yakaz.elasticsearch.plugins/elasticsearch-query-acrossvariants/1.2.0
 
 This will download the plugin from the Central Maven Repository.
-
-For older versions of ElasticSearch, you can still use the longer:
-
-	bin/plugin -url http://oss.sonatype.org/content/repositories/releases/com/yakaz/elasticsearch/plugins/elasticsearch-query-acrossvariants/1.1.1/elasticsearch-query-acrossvariants-1.1.1.zip install elasticsearch-query-acrossvariants
 
 In order to declare this plugin as a dependency, add the following to your `pom.xml`:
 
@@ -24,21 +20,21 @@ In order to declare this plugin as a dependency, add the following to your `pom.
 <dependency>
     <groupId>com.yakaz.elasticsearch.plugins</groupId>
     <artifactId>elasticsearch-query-acrossvariants</artifactId>
-    <version>1.1.1</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
 Version matrix:
 
-	┌──────────────────────────────┬────────────────┐
-	│ HashSplitter Analysis Plugin │ ElasticSearch  │
-	├──────────────────────────────┼────────────────┤
-	│ 1.2.x                        │ 0.90.6 ─►      │
-	├──────────────────────────────┼────────────────┤
-	│ 1.1.x                        │ 0.90 ─► 0.90.5 │
-	├──────────────────────────────┼────────────────┤
-	│ 1.0.x                        │ 0.19 ─► 0.20.0 │
-	└──────────────────────────────┴────────────────┘
+	┌──────────────────────────────┬─────────────────────────┐
+	│ Across Variants Query Plugin │ ElasticSearch           │
+	├──────────────────────────────┼─────────────────────────┤
+	│ 1.2.x                        │ 0.90.6 ─► (1.0.0.Beta1) │
+	├──────────────────────────────┼─────────────────────────┤
+	│ 1.1.x                        │ 0.90 ─► 0.90.5          │
+	├──────────────────────────────┼─────────────────────────┤
+	│ 1.0.x                        │ 0.19 ─► 0.20.0          │
+	└──────────────────────────────┴─────────────────────────┘
 
 Description
 -----------
