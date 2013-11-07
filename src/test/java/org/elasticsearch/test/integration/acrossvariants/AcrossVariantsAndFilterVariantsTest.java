@@ -9,7 +9,7 @@ import org.apache.lucene.search.Filter;
 import org.apache.lucene.queries.FilterClause;
 import org.apache.lucene.util.Version;
 import org.elasticsearch.common.lucene.search.MatchAllDocsFilter;
-import org.elasticsearch.common.lucene.search.TermFilter;
+import org.apache.lucene.queries.TermFilter;
 import org.elasticsearch.test.integration.ReplayAnalyzer;
 import org.testng.annotations.Test;
 
@@ -31,16 +31,16 @@ public class AcrossVariantsAndFilterVariantsTest {
     public void testToString() throws IOException {
         AcrossVariantsAndFilter Filter;
 
-        Filter = new AcrossVariantsAndFilter(Arrays.asList("field1"), new WhitespaceAnalyzer(Version.LUCENE_35), "simple test");
+        Filter = new AcrossVariantsAndFilter(Arrays.asList("field1"), new WhitespaceAnalyzer(Version.LUCENE_45), "simple test");
         assertThat(Filter.toString(), equalTo("[field1]:\"simple test\""));
 
-        Filter = new AcrossVariantsAndFilter(Arrays.asList("field1", "field2"), new WhitespaceAnalyzer(Version.LUCENE_35), "test");
+        Filter = new AcrossVariantsAndFilter(Arrays.asList("field1", "field2"), new WhitespaceAnalyzer(Version.LUCENE_45), "test");
         assertThat(Filter.toString(), equalTo("[field1,field2]:\"test\""));
     }
 
     @Test
     public void testSingle() throws IOException {
-        AcrossVariantsAndFilter Filter = new AcrossVariantsAndFilter(Arrays.asList("field1"), new WhitespaceAnalyzer(Version.LUCENE_35), "a");
+        AcrossVariantsAndFilter Filter = new AcrossVariantsAndFilter(Arrays.asList("field1"), new WhitespaceAnalyzer(Version.LUCENE_45), "a");
         Filter rewritten = Filter.rewrite();
         assertThat(rewritten, instanceOf(XBooleanFilter.class));
 
@@ -50,7 +50,7 @@ public class AcrossVariantsAndFilterVariantsTest {
 
     @Test
     public void testSimple() throws IOException {
-        AcrossVariantsAndFilter Filter = new AcrossVariantsAndFilter(Arrays.asList("field1"), new WhitespaceAnalyzer(Version.LUCENE_35), "a b c");
+        AcrossVariantsAndFilter Filter = new AcrossVariantsAndFilter(Arrays.asList("field1"), new WhitespaceAnalyzer(Version.LUCENE_45), "a b c");
         Filter rewritten = Filter.rewrite();
         assertThat(rewritten, instanceOf(XBooleanFilter.class));
 
@@ -70,7 +70,7 @@ public class AcrossVariantsAndFilterVariantsTest {
 
     @Test
     public void testAcross() throws IOException {
-        AcrossVariantsAndFilter Filter = new AcrossVariantsAndFilter(Arrays.asList("field1", "field2"), new WhitespaceAnalyzer(Version.LUCENE_35), "a b");
+        AcrossVariantsAndFilter Filter = new AcrossVariantsAndFilter(Arrays.asList("field1", "field2"), new WhitespaceAnalyzer(Version.LUCENE_45), "a b");
         Filter rewritten = Filter.rewrite();
         assertThat(rewritten, instanceOf(XBooleanFilter.class));
 
@@ -97,7 +97,7 @@ public class AcrossVariantsAndFilterVariantsTest {
             }
         };
 
-        AcrossVariantsAndFilter Filter = new AcrossVariantsAndFilter(Arrays.asList("field1"), new WhitespaceAnalyzer(Version.LUCENE_35), "a", FilterProvider);
+        AcrossVariantsAndFilter Filter = new AcrossVariantsAndFilter(Arrays.asList("field1"), new WhitespaceAnalyzer(Version.LUCENE_45), "a", FilterProvider);
         Filter rewritten = Filter.rewrite();
         assertThat(rewritten, instanceOf(XBooleanFilter.class));
 

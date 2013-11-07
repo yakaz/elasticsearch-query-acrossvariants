@@ -109,7 +109,7 @@ public class AcrossVariantsAndFilterTest extends BaseESTest {
         assertDocs(new AcrossVariantsFilterBuilder().fields("field1").value("a").analyzer("whitespace")
                 .lang("mvel").params(params).script(
                         "ctx.text = ctx.text + ctx.text;" +
-                        "ctx.filter = new org.elasticsearch.common.lucene.search.TermFilter(new org.apache.lucene.index.Term(ctx.field, ctx.text));"
+                        "ctx.filter = new org.apache.lucene.queries.TermFilter(new org.apache.lucene.index.Term(ctx.field, ctx.text));"
                 ),
                 "2");
     }

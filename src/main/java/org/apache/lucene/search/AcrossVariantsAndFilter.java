@@ -8,7 +8,7 @@ import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 import org.apache.lucene.index.AtomicReaderContext;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.util.Bits;
-import org.elasticsearch.common.lucene.search.TermFilter;
+import org.apache.lucene.queries.TermFilter;
 import org.elasticsearch.common.lucene.search.XBooleanFilter;
 
 import java.io.IOException;
