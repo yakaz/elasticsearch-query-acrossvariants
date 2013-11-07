@@ -33,11 +33,9 @@ Version matrix:
 	┌──────────────────────────────┬────────────────┐
 	│ HashSplitter Analysis Plugin │ ElasticSearch  │
 	├──────────────────────────────┼────────────────┤
-	│ master                       │ 0.90 ─► master │
+	│ 1.1.x                        │ 0.90 ─► 0.90.5 │
 	├──────────────────────────────┼────────────────┤
-	│ 1.1.x                        │ 0.90 ─► master │
-	├──────────────────────────────┼────────────────┤
-	│ 1.0.x                        │ 0.19 ─► master │
+	│ 1.0.x                        │ 0.19 ─► 0.20.0 │
 	└──────────────────────────────┴────────────────┘
 
 Description
@@ -61,7 +59,7 @@ Configuration
 The plugin provides you with the `across_variants` query and filter.<br/>
 It expects a list of fields to be queried, under the `fields` property, the `value` to query, an optional `analyzer` to tokenize it.
 
-Additionaly you can customize the leaf query type that is used in the `BooleanQuery` tree, it defaults to a simple `TermQuery`.
+Additionally you can customize the leaf query type that is used in the `BooleanQuery` tree, it defaults to a simple `TermQuery`.
 Using such customization, you can decide to use a `PrefixQuery` instead, or even change the field the query will run against.
 
 ### Reference
@@ -228,7 +226,7 @@ The plugin constructs nested `BooleanQuery`s out of the analysis of the given va
 It uses the `position`, `start_offset` and `end_offset` to know how the tokens should be assembled.
 The plugin will _and_ together every subquery it constructs for each position.
 Inside each position it adds the longest tokens, then tries to nest smaller tokens into the longer ones.
-If two tokens have the same start and end offsets, they become altenatives.
+If two tokens have the same start and end offsets, they become alternatives.
 
 Hence with the analysis details given above in the example section, the constructed tree will be:
 
