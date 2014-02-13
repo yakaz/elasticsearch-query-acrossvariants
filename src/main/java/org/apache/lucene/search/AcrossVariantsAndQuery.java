@@ -46,6 +46,18 @@ public class AcrossVariantsAndQuery extends Query {
     private float boost;
     protected TermNode termTree;
 
+    private boolean useDisMax = false;
+    private float tieBreaker = 0.0f;
+
+    public void setUseDisMax(boolean useDisMax) {
+        this.useDisMax = useDisMax;
+    }
+
+    public void setTieBreaker(float tieBreaker) {
+        this.tieBreaker = tieBreaker;
+    }
+
+
     public AcrossVariantsAndQuery(Collection<String> fields, Analyzer searchAnalyzer, String text) throws IOException {
         this(mapizeFields(fields), searchAnalyzer, text);
     }
@@ -344,19 +356,30 @@ public class AcrossVariantsAndQuery extends Query {
                 return subQueries;
 
             } else {
+				Query nodeQuery;
 
-                BooleanQuery nodeQuery = new BooleanQuery(true);
+				if (useDisMax)
+					nodeQuery = new DisjunctionMaxQuery(tieBreaker);
+				else
+					nodeQuery = new BooleanQuery(true);
+
                 for (Map.Entry<String, Float> boostedField : boostedFields.entrySet()) {
                     String field = boostedField.getKey();
                     float boost = boostedField.getValue();
                     Query query = queryProvider.queryTerm(field, node.term.term);
                     query.setBoost(boost);
-                    nodeQuery.add(query, BooleanClause.Occur.SHOULD);
+                    if (useDisMax)
+						((DisjunctionMaxQuery)nodeQuery).add(query);
+					else
+						((BooleanQuery)nodeQuery).add(query, BooleanClause.Occur.SHOULD);
                     if (node.alternateWritings != null) {
                         for (String alternateWriting : node.alternateWritings) {
                             query = queryProvider.queryTerm(field, alternateWriting);
                             query.setBoost(boost);
-                            nodeQuery.add(query, BooleanClause.Occur.SHOULD);
+                            if (useDisMax)
+								((DisjunctionMaxQuery)nodeQuery).add(query);
+							else
+								((BooleanQuery)nodeQuery).add(query, BooleanClause.Occur.SHOULD);
                         }
                     }
                 }
