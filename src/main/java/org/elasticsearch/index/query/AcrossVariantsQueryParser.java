@@ -22,6 +22,9 @@ public class AcrossVariantsQueryParser implements QueryParser {
     public static final String NAME = "across_variants";
     public static final String[] NAMES = { NAME, "acrossvariants" };
 
+    public static final boolean USE_DIS_MAX_DEFAULT = false;
+    public static final float TIE_BREAKER_DEFAULT = 0.0f;
+
     private final AnalysisService analysisService;
     private final ScriptService scriptService;
 
@@ -47,6 +50,8 @@ public class AcrossVariantsQueryParser implements QueryParser {
         String lang = null;
         String script = null;
         Map<String, Object> params = Maps.newHashMap();
+        boolean use_dis_max = USE_DIS_MAX_DEFAULT;
+        float tie_breaker = TIE_BREAKER_DEFAULT;
 
         XContentParser.Token token;
         String currentFieldName = null;
@@ -92,6 +97,10 @@ public class AcrossVariantsQueryParser implements QueryParser {
                     params = parser.map();
                 } else if ("boost".equals(currentFieldName)) {
                     boost = parser.floatValue();
+                } else if ("use_dis_max".equals(currentFieldName) || "useDisMax".equals(currentFieldName)) {
+                    use_dis_max = parser.booleanValue();
+                } else if ("tie_breaker".equals(currentFieldName) || "tieBreaker".equals(currentFieldName)) {
+                    tie_breaker = parser.floatValue();
                 } else {
                     throw new QueryParsingException(parseContext.index(), "["+NAME+"] query does not support [" + currentFieldName + "]");
                 }
@@ -117,12 +126,14 @@ public class AcrossVariantsQueryParser implements QueryParser {
             mappedFieldsBoost.put(fieldName, boostedField.getValue());
         }
 
-        Query query;
+        AcrossVariantsAndQuery query;
         if (queryProvider != null)
             query = new AcrossVariantsAndQuery(mappedFieldsBoost, analyzer, value, queryProvider);
         else
             query = new AcrossVariantsAndQuery(mappedFieldsBoost, analyzer, value);
         query.setBoost(boost);
+        query.setUseDisMax(use_dis_max);
+        query.setTieBreaker(tie_breaker);
         return query;
     }
 

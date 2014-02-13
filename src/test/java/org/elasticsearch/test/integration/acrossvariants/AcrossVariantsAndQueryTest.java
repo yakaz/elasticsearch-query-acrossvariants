@@ -127,4 +127,29 @@ public class AcrossVariantsAndQueryTest extends BaseESTest {
                 "2");
     }
 
+    @Test
+    public void testDisMax() throws IOException {
+        indexDoc(doc("1", "field1", "a"));
+        indexDoc(doc("2", "field2", "a"));
+        indexDoc(doc("3", "field1", "a", "field2", "a"));
+        commit();
+
+        assertDocs(new AcrossVariantsQueryBuilder().useDisMax(false).fields("field1", "field2").value("a").analyzer("whitespace"),
+                "3",  // scores √2
+                "1",  // scores √2 ÷ 2
+                "2"); // scores √2 ÷ 2
+        assertDocs(new AcrossVariantsQueryBuilder().useDisMax(true).tieBreaker(0.1f).fields("field1", "field2").value("a").analyzer("whitespace"),
+                "3",  // scores 1.1
+                "1",  // scores 1.0
+                "2"); // scores 1.0
+        assertDocs(new AcrossVariantsQueryBuilder().useDisMax(true).tieBreaker(0.0f).fields("field1", "field2").value("a").analyzer("whitespace"),
+                "1",  // scores 1.0
+                "2",  // scores 1.0
+                "3"); // scores 1.0
+        assertDocs(new AcrossVariantsQueryBuilder().useDisMax(true).tieBreaker(-0.1f).fields("field1", "field2").value("a").analyzer("whitespace"),
+                "1",  // scores √2 ÷ 2
+                "2",  // scores √2 ÷ 2
+                "3"); // scores 0.9
+    }
+
 }

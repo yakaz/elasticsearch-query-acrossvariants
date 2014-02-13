@@ -12,6 +12,8 @@ public class AcrossVariantsQueryBuilder extends BaseQueryBuilder {
 
     private Map<String, Float> boostedFields = new HashMap<String, Float>();
     private String value;
+    private boolean useDisMax;
+    private float tieBreaker;
     private String analyzer;
     private String lang;
     private String script;
@@ -98,6 +100,16 @@ public class AcrossVariantsQueryBuilder extends BaseQueryBuilder {
         return this;
     }
 
+    public AcrossVariantsQueryBuilder useDisMax(boolean useDisMax) {
+        this.useDisMax = useDisMax;
+        return this;
+    }
+
+    public AcrossVariantsQueryBuilder tieBreaker(float tieBreaker) {
+        this.tieBreaker = tieBreaker;
+        return this;
+    }
+
     public AcrossVariantsQueryBuilder analyzer(String analyzer) {
         this.analyzer = analyzer;
         return this;
@@ -140,6 +152,10 @@ public class AcrossVariantsQueryBuilder extends BaseQueryBuilder {
                 builder.value(field);
             builder.endArray();
         }
+        if (useDisMax != AcrossVariantsQueryParser.USE_DIS_MAX_DEFAULT)
+            builder.field("use_dis_max", useDisMax);
+        if (useDisMax && tieBreaker != AcrossVariantsQueryParser.TIE_BREAKER_DEFAULT)
+            builder.field("tie_breaker", tieBreaker);
         if (analyzer != null)
             builder.field("analyzer", analyzer);
         if (lang != null)

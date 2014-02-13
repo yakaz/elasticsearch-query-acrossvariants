@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -303,51 +304,57 @@ public class AcrossVariantsAndFilter extends Filter {
 
     protected class TreeVisitor implements TermNode.Visitor<Filter> {
 
+        public Filter buildAndFilter(List<Filter> filters) {
+            if (filters.size() == 1) return filters.get(0);
+            XBooleanFilter rtn = new XBooleanFilter();
+            for (Filter filter : filters)
+                rtn.add(filter, BooleanClause.Occur.MUST);
+            return rtn;
+        }
+
+        public Filter buildOrFilter(List<Filter> filters) {
+            if (filters.size() == 1) return filters.get(0);
+            XBooleanFilter rtn = new XBooleanFilter();
+            for (Filter filter : filters)
+                rtn.add(filter, BooleanClause.Occur.SHOULD);
+            return rtn;
+        }
+
         @Override
         public Filter visit(TermNode node, List<Filter> childrenOutput) {
-            Filter subQueries = null;
+            Filter childrenFilter = null;
             if (childrenOutput != null && !childrenOutput.isEmpty()) {
-                if (childrenOutput.size() == 1) {
-                    subQueries = childrenOutput.get(0);
-                } else {
-                    XBooleanFilter _subQueries = new XBooleanFilter();
-                    for (Filter subquery : childrenOutput)
-                        if (subquery != null)
-                            _subQueries.add(subquery, BooleanClause.Occur.MUST);
-                    subQueries = _subQueries;
-                }
+                childrenFilter = buildAndFilter(childrenOutput);
             }
 
             if (node.term == null) {
 
                 // Root node
-                if (subQueries == null)
+                if (childrenFilter == null)
                     return new XBooleanFilter();
-                return subQueries;
+                return childrenFilter;
 
             } else {
 
-                XBooleanFilter nodeFilter = new XBooleanFilter();
+                List<Filter> nodeFilters = new LinkedList<Filter>();
+
                 for (String field : fields) {
                     Filter filter = filterProvider.filterTerm(field, node.term.term);
                     if (filter != null)
-                        nodeFilter.add(filter, BooleanClause.Occur.SHOULD);
+                        nodeFilters.add(filter);
                     if (node.alternateWritings != null) {
                         for (String alternateWriting : node.alternateWritings) {
                             filter = filterProvider.filterTerm(field, alternateWriting);
                             if (filter != null)
-                                nodeFilter.add(filter, BooleanClause.Occur.SHOULD);
+                                nodeFilters.add(filter);
                         }
                     }
                 }
 
-                if (subQueries == null)
-                    return nodeFilter;
+                if (childrenFilter != null)
+                    nodeFilters.add(childrenFilter);
 
-                XBooleanFilter rtn = new XBooleanFilter();
-                rtn.add(nodeFilter, BooleanClause.Occur.SHOULD);
-                rtn.add(subQueries, BooleanClause.Occur.SHOULD);
-                return rtn;
+                return buildOrFilter(nodeFilters);
 
             }
         }

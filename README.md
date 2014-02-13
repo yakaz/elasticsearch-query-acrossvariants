@@ -81,6 +81,9 @@ across_variants: {
     // Mandatory: Value specification
     value: "queried text",
     text:  "queried text",
+    // Optional: whether to use a `dis max` query
+    use_dis_max: false, // default value
+    tie_breaker: 0.0,   // default value
     // Optional: Analyzer for value specification
     analyzer: "default_search" // the default search analyzer is used by default
     // Optional: Query type customization

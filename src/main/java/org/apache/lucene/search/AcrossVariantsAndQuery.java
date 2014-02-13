@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,6 +45,8 @@ public class AcrossVariantsAndQuery extends Query {
     private final String text;
     private final QueryProvider queryProvider;
     private float boost;
+    private boolean useDisMax = false;
+    private float tieBreaker = 0.0f;
     protected TermNode termTree;
 
     public AcrossVariantsAndQuery(Collection<String> fields, Analyzer searchAnalyzer, String text) throws IOException {
@@ -110,6 +113,22 @@ public class AcrossVariantsAndQuery extends Query {
 
     public void setBoost(float boost) {
         this.boost = boost;
+    }
+
+    public void setUseDisMax(boolean useDisMax) {
+        this.useDisMax = useDisMax;
+    }
+
+    public boolean getUseDisMax() {
+        return useDisMax;
+    }
+
+    public void setTieBreaker(float tieBreaker) {
+        this.tieBreaker = tieBreaker;
+    }
+
+    public float getTieBreaker() {
+        return tieBreaker;
     }
 
     public Set<String> getFields() {
@@ -322,52 +341,63 @@ public class AcrossVariantsAndQuery extends Query {
 
     protected class TreeVisitor implements TermNode.Visitor<Query> {
 
+        public Query buildAndQuery(List<Query> queries) {
+            if (queries.size() == 1) return queries.get(0);
+            BooleanQuery rtn = new BooleanQuery(true);
+            for (Query query : queries)
+                rtn.add(query, BooleanClause.Occur.MUST);
+            return rtn;
+        }
+
+        public Query buildOrQuery(List<Query> queries) {
+            if (queries.size() == 1) return queries.get(0);
+            if (useDisMax) {
+                return new DisjunctionMaxQuery(queries, tieBreaker);
+            } else {
+                BooleanQuery rtn = new BooleanQuery(true);
+                for (Query query : queries)
+                    rtn.add(query, BooleanClause.Occur.SHOULD);
+                return rtn;
+            }
+        }
+
         @Override
         public Query visit(TermNode node, List<Query> childrenOutput) {
-            Query subQueries = null;
+            Query childrenQuery = null;
             if (childrenOutput != null && !childrenOutput.isEmpty()) {
-                if (childrenOutput.size() == 1) {
-                    subQueries = childrenOutput.get(0);
-                } else {
-                    BooleanQuery _subQueries = new BooleanQuery(true);
-                    for (Query subquery : childrenOutput)
-                        _subQueries.add(subquery, BooleanClause.Occur.MUST);
-                    subQueries = _subQueries;
-                }
+                childrenQuery = buildAndQuery(childrenOutput);
             }
 
             if (node.term == null) {
 
                 // Root node
-                if (subQueries == null)
+                if (childrenQuery == null)
                     return new BooleanQuery(true);
-                return subQueries;
+                return childrenQuery;
 
             } else {
 
-                BooleanQuery nodeQuery = new BooleanQuery(true);
+                List<Query> nodeQueries = new LinkedList<Query>();
+
                 for (Map.Entry<String, Float> boostedField : boostedFields.entrySet()) {
                     String field = boostedField.getKey();
                     float boost = boostedField.getValue();
                     Query query = queryProvider.queryTerm(field, node.term.term);
                     query.setBoost(boost);
-                    nodeQuery.add(query, BooleanClause.Occur.SHOULD);
+                    nodeQueries.add(query);
                     if (node.alternateWritings != null) {
                         for (String alternateWriting : node.alternateWritings) {
                             query = queryProvider.queryTerm(field, alternateWriting);
                             query.setBoost(boost);
-                            nodeQuery.add(query, BooleanClause.Occur.SHOULD);
+                            nodeQueries.add(query);
                         }
                     }
                 }
 
-                if (subQueries == null)
-                    return nodeQuery;
+                if (childrenQuery != null)
+                    nodeQueries.add(childrenQuery);
 
-                BooleanQuery rtn = new BooleanQuery(true);
-                rtn.add(nodeQuery, BooleanClause.Occur.SHOULD);
-                rtn.add(subQueries, BooleanClause.Occur.SHOULD);
-                return rtn;
+                return buildOrQuery(nodeQueries);
 
             }
         }

@@ -42,10 +42,7 @@ public class AcrossVariantsAndFilterVariantsTest {
     public void testSingle() throws IOException {
         AcrossVariantsAndFilter Filter = new AcrossVariantsAndFilter(Arrays.asList("field1"), new WhitespaceAnalyzer(Version.LUCENE_46), "a");
         Filter rewritten = Filter.rewrite();
-        assertThat(rewritten, instanceOf(XBooleanFilter.class));
-
-        assertThat(((XBooleanFilter) rewritten).clauses(), equalTo(Arrays.asList(
-                new FilterClause(q("field1", "a"), BooleanClause.Occur.SHOULD))));
+        assertThat(rewritten, equalTo((Filter)q("field1", "a")));
     }
 
     @Test
@@ -54,17 +51,10 @@ public class AcrossVariantsAndFilterVariantsTest {
         Filter rewritten = Filter.rewrite();
         assertThat(rewritten, instanceOf(XBooleanFilter.class));
 
-        XBooleanFilter filterA = new XBooleanFilter();
-        XBooleanFilter filterB = new XBooleanFilter();
-        XBooleanFilter filterC = new XBooleanFilter();
-        filterA.add(q("field1", "a"), BooleanClause.Occur.SHOULD);
-        filterB.add(q("field1", "b"), BooleanClause.Occur.SHOULD);
-        filterC.add(q("field1", "c"), BooleanClause.Occur.SHOULD);
-
         assertThat(((XBooleanFilter) rewritten).clauses(), equalTo(Arrays.asList(
-                new FilterClause(filterA, BooleanClause.Occur.MUST),
-                new FilterClause(filterB, BooleanClause.Occur.MUST),
-                new FilterClause(filterC, BooleanClause.Occur.MUST)
+                new FilterClause(q("field1", "a"), BooleanClause.Occur.MUST),
+                new FilterClause(q("field1", "b"), BooleanClause.Occur.MUST),
+                new FilterClause(q("field1", "c"), BooleanClause.Occur.MUST)
         )));
     }
 
@@ -99,11 +89,7 @@ public class AcrossVariantsAndFilterVariantsTest {
 
         AcrossVariantsAndFilter Filter = new AcrossVariantsAndFilter(Arrays.asList("field1"), new WhitespaceAnalyzer(Version.LUCENE_46), "a", FilterProvider);
         Filter rewritten = Filter.rewrite();
-        assertThat(rewritten, instanceOf(XBooleanFilter.class));
-
-        assertThat(((XBooleanFilter) rewritten).clauses(), equalTo(Arrays.asList(
-                new FilterClause(new MatchAllDocsFilter(), BooleanClause.Occur.SHOULD)
-        )));
+        assertThat(rewritten, instanceOf(MatchAllDocsFilter.class));
     }
 
     @Test
@@ -145,17 +131,11 @@ public class AcrossVariantsAndFilterVariantsTest {
         XBooleanFilter level0 = new XBooleanFilter();
         XBooleanFilter level1 = new XBooleanFilter();
         XBooleanFilter level2 = new XBooleanFilter();
-        XBooleanFilter filterA = new XBooleanFilter();
-        XBooleanFilter filterWiFi = new XBooleanFilter();
-        XBooleanFilter filterWi = new XBooleanFilter();
-        XBooleanFilter filterFi = new XBooleanFilter();
-        XBooleanFilter filterHotspot = new XBooleanFilter();
-
-        filterA.add(q("field1", "a"), BooleanClause.Occur.SHOULD);
-        filterWiFi.add(q("field1", "wi-fi"), BooleanClause.Occur.SHOULD);
-        filterWi.add(q("field1", "wi"), BooleanClause.Occur.SHOULD);
-        filterFi.add(q("field1", "fi"), BooleanClause.Occur.SHOULD);
-        filterHotspot.add(q("field1", "hotspot"), BooleanClause.Occur.SHOULD);
+        Filter filterA = q("field1", "a");
+        Filter filterWiFi = q("field1", "wi-fi");
+        Filter filterWi = q("field1", "wi");
+        Filter filterFi = q("field1", "fi");
+        Filter filterHotspot = q("field1", "hotspot");
 
         level0.add(filterA, BooleanClause.Occur.MUST);
         level0.add(level1, BooleanClause.Occur.MUST);
@@ -193,22 +173,14 @@ public class AcrossVariantsAndFilterVariantsTest {
         XBooleanFilter level2 = new XBooleanFilter();
         XBooleanFilter level3 = new XBooleanFilter();
         XBooleanFilter level4 = new XBooleanFilter();
-        XBooleanFilter filterA = new XBooleanFilter();
-        XBooleanFilter filterB = new XBooleanFilter();
-        XBooleanFilter filterC = new XBooleanFilter();
-        XBooleanFilter filterD = new XBooleanFilter();
-        XBooleanFilter filterE = new XBooleanFilter();
-        XBooleanFilter filterF = new XBooleanFilter();
-        XBooleanFilter filterG = new XBooleanFilter();
-        XBooleanFilter filterH = new XBooleanFilter();
-        filterA.add(q("field1", "a"), BooleanClause.Occur.SHOULD);
-        filterB.add(q("field1", "b"), BooleanClause.Occur.SHOULD);
-        filterC.add(q("field1", "c"), BooleanClause.Occur.SHOULD);
-        filterD.add(q("field1", "d"), BooleanClause.Occur.SHOULD);
-        filterE.add(q("field1", "e"), BooleanClause.Occur.SHOULD);
-        filterF.add(q("field1", "f"), BooleanClause.Occur.SHOULD);
-        filterG.add(q("field1", "g"), BooleanClause.Occur.SHOULD);
-        filterH.add(q("field1", "h"), BooleanClause.Occur.SHOULD);
+        Filter filterA = q("field1", "a");
+        Filter filterB = q("field1", "b");
+        Filter filterC = q("field1", "c");
+        Filter filterD = q("field1", "d");
+        Filter filterE = q("field1", "e");
+        Filter filterF = q("field1", "f");
+        Filter filterG = q("field1", "g");
+        Filter filterH = q("field1", "h");
 
         level0.add(filterA, BooleanClause.Occur.MUST);
         level0.add(level1, BooleanClause.Occur.MUST);
