@@ -1,6 +1,6 @@
 package org.elasticsearch.test.integration;
 
-import org.elasticsearch.ElasticSearchGenerationException;
+import org.elasticsearch.ElasticsearchGenerationException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.action.admin.indices.analyze.AnalyzeRequest;
@@ -168,7 +168,7 @@ public class BaseESTest {
                 builder.field(etc[i], etc[i+1]);
             return rtn.source(builder.endObject());
         } catch (IOException e) {
-            throw new ElasticSearchGenerationException("Failed to generate", e);
+            throw new ElasticsearchGenerationException("Failed to generate", e);
         }
     }
     protected void indexDoc(IndexRequest doc) throws IOException {

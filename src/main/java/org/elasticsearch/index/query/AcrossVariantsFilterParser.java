@@ -4,7 +4,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.AcrossVariantsAndFilter;
 import org.apache.lucene.search.Filter;
-import org.elasticsearch.ElasticSearchIllegalArgumentException;
+import org.elasticsearch.ElasticsearchIllegalArgumentException;
 import org.elasticsearch.common.collect.Maps;
 import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.xcontent.XContentParser;
@@ -155,13 +155,13 @@ public class AcrossVariantsFilterParser implements FilterParser {
                 // Unwrap ctx
                 scriptContext.putAll((Map<String, Object>) script.unwrap(scriptContext));
             } catch (Exception e) {
-                throw new ElasticSearchIllegalArgumentException("failed to execute script", e);
+                throw new ElasticsearchIllegalArgumentException("failed to execute script", e);
             }
 
             try {
                 return (Filter) scriptContext.get("filter");
             } catch (ClassCastException e) {
-                throw new ElasticSearchIllegalArgumentException("script did not give a " + Filter.class.getCanonicalName() + " in ctx.filter", e);
+                throw new ElasticsearchIllegalArgumentException("script did not give a " + Filter.class.getCanonicalName() + " in ctx.filter", e);
             }
         }
     }

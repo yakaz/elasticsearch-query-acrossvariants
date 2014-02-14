@@ -10,7 +10,7 @@ Installation
 
 Simply run at the root of your ElasticSearch installation:
 
-	bin/plugin --install com.yakaz.elasticsearch.plugins/elasticsearch-query-acrossvariants/1.3.0
+	bin/plugin --install com.yakaz.elasticsearch.plugins/elasticsearch-query-acrossvariants/1.4.0
 
 This will download the plugin from the Central Maven Repository.
 
@@ -20,7 +20,7 @@ In order to declare this plugin as a dependency, add the following to your `pom.
 <dependency>
     <groupId>com.yakaz.elasticsearch.plugins</groupId>
     <artifactId>elasticsearch-query-acrossvariants</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
 </dependency>
 ```
 
@@ -28,6 +28,8 @@ Version matrix:
 
 	┌──────────────────────────────┬─────────────────────────┐
 	│ Across Variants Query Plugin │ ElasticSearch           │
+	├──────────────────────────────┼─────────────────────────┤
+	│ 1.4.x                        │ 1.0.0.RC1 ─► (1.0.0)    │
 	├──────────────────────────────┼─────────────────────────┤
 	│ 1.3.x                        │ 0.90.8 ─► (0.90.11)     │
 	├──────────────────────────────┼─────────────────────────┤
