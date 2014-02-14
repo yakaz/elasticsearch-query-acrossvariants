@@ -47,6 +47,8 @@ public class AcrossVariantsQueryParser implements QueryParser {
         String lang = null;
         String script = null;
         Map<String, Object> params = Maps.newHashMap();
+        boolean use_dis_max = false;
+        float tie_breaker = 0.0f;
 
         XContentParser.Token token;
         String currentFieldName = null;
@@ -92,6 +94,10 @@ public class AcrossVariantsQueryParser implements QueryParser {
                     params = parser.map();
                 } else if ("boost".equals(currentFieldName)) {
                     boost = parser.floatValue();
+                } else if ("use_dis_max".equals(currentFieldName) || "useDisMax".equals(currentFieldName)) {
+					use_dis_max = parser.booleanValue();
+                } else if ("tie_breaker".equals(currentFieldName) || "tieBreaker".equals(currentFieldName)) {
+					tie_breaker = parser.floatValue();
                 } else {
                     throw new QueryParsingException(parseContext.index(), "["+NAME+"] query does not support [" + currentFieldName + "]");
                 }
@@ -123,6 +129,8 @@ public class AcrossVariantsQueryParser implements QueryParser {
         else
             query = new AcrossVariantsAndQuery(mappedFieldsBoost, analyzer, value);
         query.setBoost(boost);
+        ((AcrossVariantsAndQuery)query).setUseDisMax(use_dis_max);
+        ((AcrossVariantsAndQuery)query).setTieBreaker(tie_breaker);
         return query;
     }
 
