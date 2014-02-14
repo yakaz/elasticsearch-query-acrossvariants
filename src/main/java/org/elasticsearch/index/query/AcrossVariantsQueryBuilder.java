@@ -1,5 +1,6 @@
 package org.elasticsearch.index.query;
 
+import org.elasticsearch.ElasticSearchIllegalArgumentException;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
 import java.io.IOException;
@@ -125,7 +126,7 @@ public class AcrossVariantsQueryBuilder extends BaseQueryBuilder {
     @Override
     protected void doXContent(XContentBuilder builder, Params parameters) throws IOException {
         if (boostedFields.isEmpty())
-            throw new QueryBuilderException("["+AcrossVariantsQueryParser.NAME+"] no fields given");
+            throw new ElasticSearchIllegalArgumentException("["+AcrossVariantsQueryParser.NAME+"] no fields given");
         builder.startObject(AcrossVariantsQueryParser.NAME);
         builder.field("value", value);
         if (hasBoostedFields) {
