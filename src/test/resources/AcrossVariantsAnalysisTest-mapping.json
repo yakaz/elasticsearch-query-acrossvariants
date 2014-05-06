@@ -1,0 +1,17 @@
+{
+    some_type: {
+        _source: {
+            enabled: false
+        },
+        _all: {
+            enabled: false
+        },
+        properties: {
+            field1: {
+                type: "string",
+                index: "analyzed",
+                analyzer: "custom_analyzer"
+            }
+        }
+    }
+}

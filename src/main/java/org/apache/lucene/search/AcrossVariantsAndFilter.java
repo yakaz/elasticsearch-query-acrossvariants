@@ -9,6 +9,7 @@ import org.apache.lucene.index.AtomicReaderContext;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.util.Bits;
 import org.apache.lucene.queries.TermFilter;
+import org.elasticsearch.ElasticsearchIllegalArgumentException;
 import org.elasticsearch.common.lucene.search.XBooleanFilter;
 
 import java.io.IOException;
@@ -55,6 +56,9 @@ public class AcrossVariantsAndFilter extends Filter {
     public AcrossVariantsAndFilter(Collection<String> fields, Analyzer searchAnalyzer, String text, FilterProvider filterProvider) throws IOException {
         this.fields = fields;
         this.searchAnalyzer = searchAnalyzer;
+        if (this.searchAnalyzer == null) {
+            throw new ElasticsearchIllegalArgumentException("AcrossVariants analyzer can't be null");
+        }
         this.text = text;
         this.filterProvider = filterProvider;
         this.termTree = buildTree(new StringReader(text));
@@ -73,23 +77,26 @@ public class AcrossVariantsAndFilter extends Filter {
 
         // Logic similar to QueryParser#getFieldQuery
         final TokenStream source = searchAnalyzer.tokenStream(null, input);
-        source.reset();
+        try {
+            source.reset();
 
-        final CharTermAttribute termAtt = source.addAttribute(CharTermAttribute.class);
-        final OffsetAttribute offsetAtt = source.addAttribute(OffsetAttribute.class);
-        final PositionIncrementAttribute posIncrAtt = source.addAttribute(PositionIncrementAttribute.class);
-        int pos = 0;
-        List<PositionedTerm> collectedTokens = new ArrayList<PositionedTerm>();
-        while (source.incrementToken()) {
-            pos += posIncrAtt.getPositionIncrement();
-            collectedTokens.add(new PositionedTerm(termAtt.toString(), offsetAtt.startOffset(), offsetAtt.endOffset(), pos));
+            final CharTermAttribute termAtt = source.addAttribute(CharTermAttribute.class);
+            final OffsetAttribute offsetAtt = source.addAttribute(OffsetAttribute.class);
+            final PositionIncrementAttribute posIncrAtt = source.addAttribute(PositionIncrementAttribute.class);
+            int pos = 0;
+            List<PositionedTerm> collectedTokens = new ArrayList<PositionedTerm>();
+            while (source.incrementToken()) {
+                pos += posIncrAtt.getPositionIncrement();
+                collectedTokens.add(new PositionedTerm(termAtt.toString(), offsetAtt.startOffset(), offsetAtt.endOffset(), pos));
+            }
+            source.end();
+
+            Collections.sort(collectedTokens);
+            for (PositionedTerm term : collectedTokens)
+                root.add(term);
+        } finally {
+            source.close();
         }
-        source.end();
-        source.reset();
-
-        Collections.sort(collectedTokens);
-        for (PositionedTerm term : collectedTokens)
-            root.add(term);
 
         return root;
     }

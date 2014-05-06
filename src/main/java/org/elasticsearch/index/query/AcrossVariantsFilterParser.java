@@ -100,6 +100,9 @@ public class AcrossVariantsFilterParser implements FilterParser {
         if (value == null) {
             throw new QueryParsingException(parseContext.index(), "No value specified for "+NAME+" query");
         }
+        if (analyzer == null) {
+            throw new QueryParsingException(parseContext.index(), "No analyzer specified for "+NAME+" query");
+        }
 
         AcrossVariantsAndFilter.FilterProvider filterProvider = null;
         if (script != null) {

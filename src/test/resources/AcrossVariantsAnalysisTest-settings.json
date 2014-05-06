@@ -1,0 +1,21 @@
+{
+    index: {
+        mapping: {
+            dynamic: false
+        },
+        analysis: {
+            analyzer: {
+                custom_analyzer: {
+                    type: "custom",
+                    tokenizer: "space_splitter"
+                }
+            },
+            tokenizer: {
+                space_splitter: {
+                    type: "pattern",
+                    pattern: " "
+                }
+            }
+        }
+    }
+}

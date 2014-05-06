@@ -110,6 +110,9 @@ public class AcrossVariantsQueryParser implements QueryParser {
         if (value == null) {
             throw new QueryParsingException(parseContext.index(), "No value specified for "+NAME+" query");
         }
+        if (analyzer == null) {
+            throw new QueryParsingException(parseContext.index(), "No analyzer specified for "+NAME+" query");
+        }
 
         AcrossVariantsAndQuery.QueryProvider queryProvider = null;
         if (script != null) {
