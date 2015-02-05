@@ -70,6 +70,13 @@
             <version>${lucene.version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- Activate the following when running tests against ES 1.4+ -->
+        <!--dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch-lang-mvel</artifactId>
+            <version>1.4.1</version>
+            <scope>test</scope>
+        </dependency-->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
