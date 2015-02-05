@@ -64,6 +64,7 @@ public class BaseESTest {
                 .put("gateway.type", "none")
                 .put("index.numberOfReplicas", 0)
                 .put("index.numberOfShards", 1)
+                .put("script.disable_dynamic", false)
         ).node();
     }
 
