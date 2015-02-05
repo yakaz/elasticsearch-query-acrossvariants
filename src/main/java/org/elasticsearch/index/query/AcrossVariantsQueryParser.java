@@ -49,6 +49,7 @@ public class AcrossVariantsQueryParser implements QueryParser {
         Map<String,Float> fieldsBoost = new HashMap<String, Float>();
         String lang = null;
         String script = null;
+        ScriptService.ScriptType scriptType = null;
         Map<String, Object> params = Maps.newHashMap();
         boolean use_dis_max = USE_DIS_MAX_DEFAULT;
         float tie_breaker = TIE_BREAKER_DEFAULT;
@@ -92,6 +93,13 @@ public class AcrossVariantsQueryParser implements QueryParser {
                     lang = parser.text();
                 } else if ("script".equals(currentFieldName)) {
                     script = parser.text();
+                    scriptType = ScriptService.ScriptType.INLINE;
+                } else if ("script_id".equals(currentFieldName)) {
+                    script = parser.text();
+                    scriptType = ScriptService.ScriptType.INDEXED;
+                } else if ("script_file".equals(currentFieldName)) {
+                    script = parser.text();
+                    scriptType = ScriptService.ScriptType.FILE;
                 } else if ("params".equals(currentFieldName)) {
                     parser.nextToken();
                     params = parser.map();
@@ -116,7 +124,7 @@ public class AcrossVariantsQueryParser implements QueryParser {
 
         AcrossVariantsAndQuery.QueryProvider queryProvider = null;
         if (script != null) {
-            queryProvider = new ScriptQueryProvider(scriptService.executable(lang, script, params));
+            queryProvider = new ScriptQueryProvider(scriptService.executable(lang, script, scriptType, params));
         }
 
         Map<String, Float> mappedFieldsBoost = new HashMap<String, Float>();

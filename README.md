@@ -10,7 +10,7 @@ Installation
 
 Simply run at the root of your ElasticSearch installation:
 
-	bin/plugin --install com.yakaz.elasticsearch.plugins/elasticsearch-query-acrossvariants/1.4.1
+	bin/plugin --install com.yakaz.elasticsearch.plugins/elasticsearch-query-acrossvariants/1.5.0
 
 This will download the plugin from the Central Maven Repository.
 
@@ -20,7 +20,7 @@ In order to declare this plugin as a dependency, add the following to your `pom.
 <dependency>
     <groupId>com.yakaz.elasticsearch.plugins</groupId>
     <artifactId>elasticsearch-query-acrossvariants</artifactId>
-    <version>1.4.1</version>
+    <version>1.5.0</version>
 </dependency>
 ```
 
@@ -28,6 +28,8 @@ Version matrix:
 
 	┌──────────────────────────────┬─────────────────────────┐
 	│ Across Variants Query Plugin │ ElasticSearch           │
+	├──────────────────────────────┼─────────────────────────┤
+	│ 1.5.x                        │ 1.3.0 ─► (1.3.7)        │
 	├──────────────────────────────┼─────────────────────────┤
 	│ 1.4.x                        │ 1.0.0.RC1 ─► 1.2.4      │
 	├──────────────────────────────┼─────────────────────────┤
@@ -88,6 +90,8 @@ across_variants: {
     analyzer: "default_search" // the default search analyzer is used by default
     // Optional: Query type customization
     script: "ctx.query = new org.apache.lucene.search.TermQuery(ctx.term)", // script equivalent of the default behavior
+    script_id: "foo", // uses an indexed script
+    script_file: "foo", // uses a file script
     lang: "mvel", // ElasticSearch default script language
     params: {} // any custom parameters for the script
 }

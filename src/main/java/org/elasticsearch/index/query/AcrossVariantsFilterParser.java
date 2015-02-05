@@ -51,6 +51,7 @@ public class AcrossVariantsFilterParser implements FilterParser {
         Collection<String> fields = new ArrayList<String>();
         String lang = null;
         String script = null;
+        ScriptService.ScriptType scriptType = null;
         Map<String, Object> params = Maps.newHashMap();
 
         XContentParser.Token token;
@@ -88,6 +89,13 @@ public class AcrossVariantsFilterParser implements FilterParser {
                     lang = parser.text();
                 } else if ("script".equals(currentFieldName)) {
                     script = parser.text();
+                    scriptType = ScriptService.ScriptType.INLINE;
+                } else if ("script_id".equals(currentFieldName)) {
+                    script = parser.text();
+                    scriptType = ScriptService.ScriptType.INDEXED;
+                } else if ("script_file".equals(currentFieldName)) {
+                    script = parser.text();
+                    scriptType = ScriptService.ScriptType.FILE;
                 } else if ("params".equals(currentFieldName)) {
                     parser.nextToken();
                     params = parser.map();
@@ -106,7 +114,7 @@ public class AcrossVariantsFilterParser implements FilterParser {
 
         AcrossVariantsAndFilter.FilterProvider filterProvider = null;
         if (script != null) {
-            filterProvider = new ScriptFilterProvider(scriptService.executable(lang, script, params));
+            filterProvider = new ScriptFilterProvider(scriptService.executable(lang, script, scriptType, params));
         }
 
 
